@@ -51,7 +51,6 @@ void draw_game(GameInfo_t *state, state_t current_state) {
         print_center(FIELD_HEIGHT/2 - 1, "MOVING");
      }
 
-
     if (current_state == START) {
         print_center(FIELD_HEIGHT/2 - 1, "Press S to Start");
         print_center(FIELD_HEIGHT/2,     "Press Q to Quit");
@@ -68,7 +67,7 @@ void draw_game(GameInfo_t *state, state_t current_state) {
 }
 
 void runGame() {
-    state_t current_state = START;
+   state_t current_state = START;
     GameInfo_t info = {0};
 
     init_ncurses();
@@ -78,30 +77,14 @@ void runGame() {
         int ch = getch();
         if (ch != ERR) { // есть ввод
             switch (ch) {
-                case 'q': // выход
-                    userInput(Terminate, false);
-                    break;
-                case 's': // старт игры
-                    userInput(Start, false);
-                    break;
-                case 'p':
-                    userInput(Pause, false);
-                    break;
-                case 'r': // вращение
-                    userInput(Action, false);
-                    break;
-                case KEY_LEFT:
-                    userInput(Left, false);
-                    break;
-                case KEY_RIGHT:
-                    userInput(Right, false);
-                    break;
-                case KEY_UP:
-                    userInput(Up, false);
-                    break;
-                case KEY_DOWN:
-                    userInput(Down, false);
-                    break;
+                case 'q': userInput(Terminate, false); break;
+                case 's': userInput(Start, false); break;
+                case 'p': userInput(Pause, false); break;
+                case 'r': userInput(Action, false); break;
+                case KEY_LEFT:  userInput(Left, false); break;
+                case KEY_RIGHT: userInput(Right, false); break;
+                case KEY_UP:    userInput(Up, false); break;
+                case KEY_DOWN:  userInput(Down, false); break;
             }
         }
 
@@ -109,7 +92,7 @@ void runGame() {
         current_state = getCurrentState();
         draw_game(&info, current_state);
 
-        napms(400);
+        napms(50);
     }
 
     stop_ncurses();

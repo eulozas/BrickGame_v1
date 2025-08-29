@@ -2,6 +2,7 @@
 #define BACKEND_H
 
 #include <stdbool.h>
+#include "state.h"
 
 #define FIELD_WIDTH 10
 #define FIELD_HEIGHT 20
@@ -39,9 +40,12 @@ typedef struct {
     int speed;
     int pause;
     int running;
+    long last_fall_time;   // когда в последний раз падала фигура
+    long fall_delay;       // интервал между падениями (мс)
 } GameState;
 
 void initGame();
+state_t getCurrentState();
 void userInput(UserAction_t action, bool hold);
 GameInfo_t updateCurrentState();
 void freeGameInfo(GameInfo_t *info);

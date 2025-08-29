@@ -7,6 +7,8 @@ void spawn_new_piece(GameState *game);
 void move_piece_down(GameState *game);
 int canMoveLeft(GameState *game);
 void moveLeft(GameState *game);
+int canMoveRight(GameState *game);
+void moveRight(GameState *game);
 void rotate_piece(GameState *game);
 
 #endif

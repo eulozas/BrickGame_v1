@@ -6,7 +6,7 @@ typedef enum
     START = 0,       
     SPAWN,           
     MOVING,          
-    SHIFTING,        
+   // SHIFTING,        
     ATTACHING,  
     PAUSE,     
     GAMEOVER,        

@@ -13,12 +13,23 @@ void move_piece_down(GameState *game){
 }
 
 
+int canMoveRight(GameState *game){
+     return 1;
+    //проверить можно ли сдвинуть вправо
+}
+void moveRight(GameState *game){
+    game->field[game->currentY][game->currentX++] = 0;
+    game->field[game->currentY][game->currentX] = 1;
+    //сдвинуть вправо
+}
+
+
 int canMoveLeft(GameState *game){
      return 1;
     //проверить можно ли сдвинуть влево
 }
 void moveLeft(GameState *game){
-    return;
+ 
     //сдвинуть влево
 }
 

@@ -1,8 +1,8 @@
 #include "backend.h"
 #include "helpers.h"
-#include "state.h"
 #include <stdlib.h>
 #include <string.h>
+#include <sys/time.h>
 
 static state_t current_state = START;
 static GameState game;  // глобальное внутреннее состояние
@@ -35,6 +35,21 @@ state_t getCurrentState() {
 }
 
 
+long current_time_ms() {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+}
+
+bool time_to_fall(GameState *g) {
+    long now = current_time_ms();
+    if (now - g->last_fall_time >= g->fall_delay) {
+        g->last_fall_time = now;
+        return true;
+    }
+    return false;
+}
+
 void userInput(UserAction_t action, bool hold) {
     switch(action) {
 
@@ -54,11 +69,15 @@ void userInput(UserAction_t action, bool hold) {
         case Left:
          if (current_state == MOVING && canMoveLeft(&game)) {
             moveLeft(&game);
-            current_state = SHIFTING;
+            //current_state = SHIFTING;
          }
         break;
 
         case Right:
+        if (current_state == MOVING && canMoveRight(&game)) {
+            moveRight(&game);
+           // current_state = SHIFTING;
+         }
         break;
 
         case Up:
@@ -70,7 +89,7 @@ void userInput(UserAction_t action, bool hold) {
         case Action:
         if (current_state == MOVING) {
             rotate_piece(&game);  
-            current_state = SHIFTING;
+            //current_state = SHIFTING;
         }
         break;
 
@@ -110,15 +129,19 @@ GameInfo_t updateCurrentState() {
                 break;
             case SPAWN:
                 spawn_new_piece(&game);
+                game.last_fall_time = current_time_ms();
+                game.fall_delay = 500; // мс, можешь регулировать от уровня
                 current_state = MOVING;
                 break;
             case MOVING:
-                move_piece_down(&game); // падение
+                if (time_to_fall(&game)) {
+                    move_piece_down(&game);
+                }
             break;
-            case SHIFTING:
-                // обрабатываем userInput(Left/Right/Up/Down)
-                current_state = MOVING;
-                break;
+            // case SHIFTING:
+            //    moveRight(&game);
+            //     current_state = MOVING;
+            //     break;
             case ATTACHING:
                 //fix_piece_to_field(&game);
                 //clear_full_lines(&game);
