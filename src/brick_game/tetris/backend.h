@@ -27,7 +27,20 @@ typedef struct {
   int pause;
 } GameInfo_t;
 
-// API библиотеки
+// внутренняя структура
+typedef struct {
+    int field[FIELD_HEIGHT][FIELD_WIDTH];
+    int next[4][4];  // next-фигура
+    int currentPiece[4][4]; // текущая фигура
+    int currentX, currentY;  
+    int score;
+    int high_score;
+    int level;
+    int speed;
+    int pause;
+    int running;
+} GameState;
+
 void initGame();
 void userInput(UserAction_t action, bool hold);
 GameInfo_t updateCurrentState();
