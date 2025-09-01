@@ -4,7 +4,7 @@
 #include <ncurses.h>
 #include <string.h>
 #include "../../brick_game/tetris/backend.h"
-#include "../../brick_game/tetris/state.h"
+#include "../../brick_game/tetris/fsm.h"
 
 void print_overlay();
 void print_center(int row, const char *msg);

@@ -2,178 +2,54 @@
 #include "helpers.h"
 #include <stdlib.h>
 #include <string.h>
-#include <sys/time.h>
 
-static state_t current_state = START;
-static GameState game;  // глобальное внутреннее состояние
+GameStruct_t *getGameState() {
+    static GameStruct_t game;  
+    static int initialized = 0;
 
-void initGame() {
-    for (int y = 0; y < FIELD_HEIGHT; y++) {
-        for (int x = 0; x < FIELD_WIDTH; x++) {
-            game.field[y][x] = 0;
-        }
+    if (!initialized) {
+        memset(&game, 0, sizeof(GameStruct_t));
+        game.running = 1;
+        game.level = 1;
+        game.speed = 1;
+        game.pause = 0;
+        game.last_fall_time = 0;
+        game.fall_delay = 1000; // 1 секунда
+        initialized = 1;
     }
 
-    for (int y = 0; y < 4; y++) {
-        for (int x = 0; x < 4; x++) {
-            game.next[y][x] = 0;
-            game.currentPiece[y][x] = 0;
-        }
-    }
-    game.currentX = FIELD_WIDTH/2;
-    game.currentY = 0;
-    game.score = 0;
-    game.high_score = 0;
-    game.level = 1;
-    game.speed = 1;
-    game.pause = 0;
-    game.running = 1;
-}
-
-state_t getCurrentState() {
-    return current_state;
-}
-
-
-long current_time_ms() {
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
-}
-
-bool time_to_fall(GameState *g) {
-    long now = current_time_ms();
-    if (now - g->last_fall_time >= g->fall_delay) {
-        g->last_fall_time = now;
-        return true;
-    }
-    return false;
-}
-
-void userInput(UserAction_t action, bool hold) {
-    switch(action) {
-
-        case Start:
-        if (current_state == START || current_state == GAMEOVER)
-        current_state = SPAWN;
-        break;
-
-        case Pause:
-        if(current_state == MOVING){
-            current_state = PAUSE;
-        }else{
-            current_state = MOVING;
-        } 
-        break;
-
-        case Left:
-         if (current_state == MOVING && canMoveLeft(&game)) {
-            moveLeft(&game);
-            //current_state = SHIFTING;
-         }
-        break;
-
-        case Right:
-        if (current_state == MOVING && canMoveRight(&game)) {
-            moveRight(&game);
-           // current_state = SHIFTING;
-         }
-        break;
-
-        case Up:
-        break;
-
-        case Down:
-        break;
-
-        case Action:
-        if (current_state == MOVING) {
-            rotate_piece(&game);  
-            //current_state = SHIFTING;
-        }
-        break;
-
-        case Terminate:
-        current_state = EXIT_STATE;
-        break;
-    }
-}
-
-GameInfo_t copy_game_info(GameState *game) {
-    GameInfo_t info;
-    info.field = malloc(FIELD_HEIGHT * sizeof(int *));
-    for (int y = 0; y < FIELD_HEIGHT; y++) {
-        info.field[y] = malloc(FIELD_WIDTH * sizeof(int));
-        memcpy(info.field[y], game->field[y], FIELD_WIDTH * sizeof(int));
-    }
-
-    info.next = malloc(FIELD_HEIGHT * sizeof(int *));
-    for (int y = 0; y < FIELD_HEIGHT; y++) {
-        info.next[y] = malloc(FIELD_WIDTH * sizeof(int));
-        memcpy(info.next[y], game->next[y], FIELD_WIDTH * sizeof(int));
-    }
-
-    info.score = game->score;
-    info.high_score = game->high_score;
-    info.level = game->level;
-    info.speed = game->speed;
-    info.pause = game->pause;
-
-    return info;
-}
-
-GameInfo_t updateCurrentState() {
-    if (current_state != EXIT_STATE) {//+file_error_state later
-        switch(current_state) {
-            case START://в этом статусе игра просто инициализирована
-                break;
-            case SPAWN:
-                spawn_new_piece(&game);
-                game.last_fall_time = current_time_ms();
-                game.fall_delay = 500; // мс, можешь регулировать от уровня
-                current_state = MOVING;
-                break;
-            case MOVING:
-                if (time_to_fall(&game)) {
-                    move_piece_down(&game);
-                }
-            break;
-            // case SHIFTING:
-            //    moveRight(&game);
-            //     current_state = MOVING;
-            //     break;
-            case ATTACHING:
-                //fix_piece_to_field(&game);
-                //clear_full_lines(&game);
-                    // if (check_game_over(&game))
-                        // current_state = GAMEOVER;
-                    // else
-                         // current_state = SPAWN;
-                //  break;
-             case GAMEOVER:
-                // выводим сообщение, ждём Start или Exit
-                break;
-            case EXIT_STATE:
-                break;
-            case PAUSE:
-                break;
-        }
-    }
-    return copy_game_info(&game); 
-}
-
-static void freeMatrix(int **m, int h) {
-    if (!m) return;
-    for (int i = 0; i < h; i++) {
-        free(m[i]);
-    }
-    free(m);
+    return &game;
 }
 
 void freeGameInfo(GameInfo_t *info) {
-    if (!info) return;
-    freeMatrix(info->field, FIELD_HEIGHT);
-    freeMatrix(info->next, 4);
+    for (int i = 0; i < FIELD_HEIGHT; i++) {
+        free(info->field[i]);
+    }
+    free(info->field);
+
+    for (int i = 0; i < 4; i++) {
+        free(info->next[i]);
+    }
+    free(info->next);
+
     info->field = NULL;
     info->next = NULL;
+}
+
+static int **alloc_and_copy_field(int src[FIELD_HEIGHT][FIELD_WIDTH]) {
+    int **dst = malloc(FIELD_HEIGHT * sizeof(int *));
+    for (int i = 0; i < FIELD_HEIGHT; i++) {
+        dst[i] = malloc(FIELD_WIDTH * sizeof(int));
+        memcpy(dst[i], src[i], FIELD_WIDTH * sizeof(int));
+    }
+    return dst;
+}
+
+static int **alloc_and_copy_next(int src[4][4]) {
+    int **dst = malloc(4 * sizeof(int *));
+    for (int i = 0; i < 4; i++) {
+        dst[i] = malloc(4 * sizeof(int));
+        memcpy(dst[i], src[i], 4 * sizeof(int));
+    }
+    return dst;
 }
