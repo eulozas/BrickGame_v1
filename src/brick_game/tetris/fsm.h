@@ -35,22 +35,7 @@ typedef struct {
   int level;
   int speed;
   int pause;
-} GameInfo_t;
-
-typedef struct {
-    int field[FIELD_HEIGHT][FIELD_WIDTH];
-    int next[4][4];  // next-фигура
-    int currentPiece[4][4]; // текущая фигура
-    int currentX, currentY;  
-    int score;
-    int high_score;
-    int level;
-    int speed;
-    int pause;
-    int running;
-    long last_fall_time;   // когда в последний раз падала фигура
-    long fall_delay;       // интервал между падениями (мс)
-} GameStruct_t;
+} GameInfo_t; //может вынести в отдельный хедер???
 
 void userInput(UserAction_t action, bool hold);
 GameInfo_t updateCurrentState();

@@ -2,7 +2,7 @@
 
 int main() {  
     init_ncurses();
-    print_overlay();          // стартовый экран (баннер)
+    print_overlay();          // стартовый экран (баннер) Убрать??
     game_loop(); 
     endwin();
     return 0;

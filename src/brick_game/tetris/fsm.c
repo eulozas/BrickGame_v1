@@ -1,56 +1,115 @@
 #include "fsm.h"
+#include <time.h>
 
-UserAction_t getUserAction() {
-    int ch = getch(); 
-    switch (ch) {
-        case KEY_LEFT:
-            return Left;
-        case KEY_RIGHT:
-            return Right;
-        case KEY_UP:
-            return Up;      
-        case KEY_DOWN:
-            return Down;    
-        case 'r':          
-            return Action;
-        case 'p': case 'P':   
-            return Pause;
-        case 'q': case 'Q':   
-            return Terminate;
+long getCurrentTimeMs() {
+    return (long)(clock() * 1000 / CLOCKS_PER_SEC);
+}
+
+void on_start_state(UserAction_t action, GameStruct_t *game){
+    switch (action)
+    {
+        case Start:
+            //resetGame(game);
+            game->state = SPAWN;
+            break;
+        case Terminate:
+            game->state = EXIT_STATE;
+            break;
         default:
-            return Start;  
+            game->state = START;
+            break;
+    }
+}
+
+void on_spawn_state(GameStruct_t *game){
+    //переместить некст фигуру в текущую с начальными координатами
+    //создать фигуру некст
+
+    if (1){//проверить поместиться ли на поле новая фигура
+        game->state = GAMEOVER;
+    }
+    else{
+        game->state = MOVING;
+    }           
+}
+
+void on_moving_state(UserAction_t action, GameStruct_t *game){
+    switch (action){
+        case Up:
+        moveup(game);
+        break;
+        case Down:
+        movedown(game);
+        break;
+        case Right:
+        moveright(game);
+        break;
+        case Left:
+        moveleft(game);
+        break;
+        case Pause:
+        game->state = PAUSE;
+        break;
+        case Terminate:
+        game->state = EXIT_STATE;
+        break;
+        default:
+        break;
+    }
+    
+    if (game->state == MOVING) {
+        long now = getCurrentTimeMs();
+        if (now - game->last_fall_time >= game->fall_delay) {
+            game->last_fall_time = now;
+            game->state = SHIFTING;
+        }
+    }  
+}
+
+void on_shifting_state(UserAction_t action, GameStruct_t *game) {
+    if (1) {//проверить можно ли подвинуть вниз фигуру
+        //moveDown(game);
+        game->state = MOVING;
+    } else {
+        game->state = ATTACHING;
     }
 }
 
 void userInput(UserAction_t action, bool hold) {
     GameStruct_t *game = getGameState();
-    switch(action) {
-        case Left:
-        //moveLeft(game);
+    switch (game->state) {
+        case START:
+        on_start_state(action, game);
         break;
-        case Right:
-        //moveRight(game);
+
+        case SPAWN:
+        on_spawn_state(game);
         break;
-        case Down:
-        //moveDown(game);
+
+        case MOVING:
+        on_moving_state(action, game);
         break;
-        case Up:
-        //rotatePiece(game);
+
+        case SHIFTING:
+        on_shifting_state(action, game);
         break;
-        case Action:
-        //dropPiece(game);
+
+        case PAUSE:
+        if (action == Pause) game->state = MOVING;
         break;
-        case Pause:
-        //togglePause(game);
+
+        case GAMEOVER:
+        if (action == Start) {
+            restartGame(game);
+            game->state = SPAWN;
+        }
         break;
-        case Terminate:
-        //terminateGame(game);
+
+        case EXIT_STATE:
+        game->running = 0;
         break;
-        case Start:
-        //startGame(game);
-        break;
-        default:
-        break;
+
+        default: break;
     }
 
     //+логика для hold

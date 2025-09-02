@@ -15,26 +15,20 @@ GameStruct_t *getGameState() {
         game.pause = 0;
         game.last_fall_time = 0;
         game.fall_delay = 1000; // 1 секунда
+
+        if (/*loadHighScore(&game.high_score)*/1) {//функция загрузки данных из файла
+            game.state = START;
+        } else {
+            game.high_score = 0;
+            game.state = FILE_ERROR_STATE;
+        }
+
         initialized = 1;
     }
 
     return &game;
 }
 
-void freeGameInfo(GameInfo_t *info) {
-    for (int i = 0; i < FIELD_HEIGHT; i++) {
-        free(info->field[i]);
-    }
-    free(info->field);
-
-    for (int i = 0; i < 4; i++) {
-        free(info->next[i]);
-    }
-    free(info->next);
-
-    info->field = NULL;
-    info->next = NULL;
-}
 
 static int **alloc_and_copy_field(int src[FIELD_HEIGHT][FIELD_WIDTH]) {
     int **dst = malloc(FIELD_HEIGHT * sizeof(int *));
@@ -53,3 +47,19 @@ static int **alloc_and_copy_next(int src[4][4]) {
     }
     return dst;
 }
+
+void freeGameInfo(GameInfo_t *info) {
+    for (int i = 0; i < FIELD_HEIGHT; i++) {
+        free(info->field[i]);
+    }
+    free(info->field);
+
+    for (int i = 0; i < 4; i++) {
+        free(info->next[i]);
+    }
+    free(info->next);
+
+    info->field = NULL;
+    info->next = NULL;
+}
+

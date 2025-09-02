@@ -1,5 +1,27 @@
 #include "frontend.h"
 
+UserAction_t getUserAction() {
+    int ch = getch(); 
+    switch (ch) {
+        case KEY_LEFT:
+            return Left;
+        case KEY_RIGHT:
+            return Right;
+        case KEY_UP:
+            return Up;      
+        case KEY_DOWN:
+            return Down;    
+        case 'r':          
+            return Action;
+        case 'p': case 'P':   
+            return Pause;
+        case 'q': case 'Q':   
+            return Terminate;
+        default:
+            return Start;  
+    }
+}
+
 void print_overlay(){
     print_center(FIELD_HEIGHT/2 - 1, "TETRIS");
 }
@@ -9,7 +31,7 @@ void print_center(int row, const char *msg) {
     mvprintw(row, col, "%s", msg);
 }
 
-void draw_game(GameInfo_t *state, state_t current_state) {
+void draw_game(GameInfo_t *state, tet_state current_state) {
     clear();
 
     for (int x = 0; x < FIELD_WIDTH * 2 + 2; x++)
