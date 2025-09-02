@@ -2,8 +2,16 @@
 
 int main() {  
     init_ncurses();
-    print_overlay();          // стартовый экран (баннер) Убрать??
-    game_loop(); 
+    print_overlay();  
+    UserAction_t action;    
+    do {
+    action = getUserAction();
+    napms(50);
+    } while (action != Start && action != Terminate);
+
+    if (action == Start) {
+    game_loop();
+    }
     endwin();
     return 0;
 }
@@ -25,10 +33,11 @@ void game_loop() {
         UserAction_t action = getUserAction();
         userInput(action, hold);//тут меняются состояния автомата и игровая структура
         GameInfo_t snapshot = updateCurrentState(); //делается снимок игровой структуры, копируются некоторые поля в инфо структуру для отрисовки во фронте
-        drawGame(snapshot);
-        free_game_info(&snapshot);
+        drawGameInfo(&snapshot);
+        freeGameInfo(&snapshot);
 
-        if (snapshot.pause && snapshot.level == -1) break_flag = FALSE; //тут подумать условия выхода из цикла
-        napms(50);
+        if (action == Terminate) break_flag = FALSE;//придумать другой выход из цикла!
+        
+        napms(200);
     }
 }

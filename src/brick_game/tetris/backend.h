@@ -1,8 +1,7 @@
 #ifndef BACKEND_H
 #define BACKEND_H
 
-#include <stdbool.h>
-#include "fsm.h"
+#include "types.h"
 
 #define FIELD_WIDTH 10
 #define FIELD_HEIGHT 20
@@ -23,7 +22,9 @@ typedef struct {
     long fall_delay;       // интервал между падениями (мс)
 } GameStruct_t;
 
-GameStruct_t *getGameState();
+GameStruct_t *getGameStruct();
+GameInfo_t mallocGameInfo();
+void copyGameInfo(GameStruct_t *game, GameInfo_t *info);
 void freeGameInfo(GameInfo_t *info);
 
 #endif

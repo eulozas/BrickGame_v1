@@ -3,13 +3,11 @@
 
 #include <ncurses.h>
 #include <string.h>
-#include "../../brick_game/tetris/backend.h"
-#include "../../brick_game/tetris/fsm.h"
+#include "../../brick_game/tetris/tetris.h"
 
 
 UserAction_t getUserAction();
 void print_overlay();
-void print_center(int row, const char *msg);
-void draw_game(GameInfo_t *state, tet_state current_state);
+void drawGameInfo(GameInfo_t *info);
 
 #endif

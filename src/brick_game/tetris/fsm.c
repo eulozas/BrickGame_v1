@@ -36,16 +36,16 @@ void on_spawn_state(GameStruct_t *game){
 void on_moving_state(UserAction_t action, GameStruct_t *game){
     switch (action){
         case Up:
-        moveup(game);
+        //moveup(game);
         break;
         case Down:
-        movedown(game);
+        //movedown(game);
         break;
         case Right:
-        moveright(game);
+        //moveright(game);
         break;
         case Left:
-        moveleft(game);
+        //moveleft(game);
         break;
         case Pause:
         game->state = PAUSE;
@@ -75,8 +75,15 @@ void on_shifting_state(UserAction_t action, GameStruct_t *game) {
     }
 }
 
+void on_attaching_state(UserAction_t action, GameStruct_t *game) {
+    if (1) {//проверить можно ли убрать линии
+        //removeLine(game);
+    } 
+        game->state = SPAWN;
+}
+
 void userInput(UserAction_t action, bool hold) {
-    GameStruct_t *game = getGameState();
+    GameStruct_t *game = getGameStruct();
     switch (game->state) {
         case START:
         on_start_state(action, game);
@@ -94,13 +101,17 @@ void userInput(UserAction_t action, bool hold) {
         on_shifting_state(action, game);
         break;
 
+        case ATTACHING:
+        on_attaching_state(action, game);
+        break;
+
         case PAUSE:
         if (action == Pause) game->state = MOVING;
         break;
 
         case GAMEOVER:
         if (action == Start) {
-            restartGame(game);
+            //restartGame(game);
             game->state = SPAWN;
         }
         break;
@@ -116,17 +127,8 @@ void userInput(UserAction_t action, bool hold) {
 }
 
 GameInfo_t updateCurrentState() {
-  GameStruct_t *game = getGameState();
-
-    GameInfo_t info;
-    info.field = alloc_and_copy_field(game->field);
-    info.next = alloc_and_copy_next(game->next);
-
-    info.score = game->score;
-    info.high_score = game->high_score;
-    info.level = game->level;
-    info.speed = game->speed;
-    info.pause = game->pause;
-
+    GameStruct_t *game = getGameStruct();
+    GameInfo_t info = mallocGameInfo();
+    copyGameInfo(game, &info);
     return info;
 }

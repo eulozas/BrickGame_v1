@@ -11,19 +11,15 @@ UserAction_t getUserAction() {
             return Up;      
         case KEY_DOWN:
             return Down;    
-        case 'r':          
+        case 'r': case 'R':         
             return Action;
         case 'p': case 'P':   
             return Pause;
         case 'q': case 'Q':   
             return Terminate;
-        default:
-            return Start;  
+        case 's': case 'S':   
+            return Start; 
     }
-}
-
-void print_overlay(){
-    print_center(FIELD_HEIGHT/2 - 1, "TETRIS");
 }
 
 void print_center(int row, const char *msg) {
@@ -31,8 +27,51 @@ void print_center(int row, const char *msg) {
     mvprintw(row, col, "%s", msg);
 }
 
-void draw_game(GameInfo_t *state, tet_state current_state) {
+void print_overlay(){
     clear();
+    for (int x = 0; x < FIELD_WIDTH * 2 + 2; x++)
+        mvprintw(0, x, "-");
+    
+    for (int x = 0; x < FIELD_WIDTH * 2 + 2; x++)
+        mvprintw(0, x, "-");
+
+    for (int y = 0; y < FIELD_HEIGHT; y++) {
+        mvprintw(y + 1, 0, "|"); 
+        for (int x = 0; x < FIELD_WIDTH; x++) {
+            mvprintw(y + 1, x * 2 + 1,
+            "  ");
+            
+        }
+        mvprintw(y + 1, FIELD_WIDTH * 2 + 1, "|"); 
+    }
+
+    for (int x = 0; x < FIELD_WIDTH * 2 + 2; x++)
+        mvprintw(FIELD_HEIGHT + 1, x, "-");
+
+    mvprintw(2, FIELD_WIDTH * 2 + 4, "Score: %d", 0);
+    mvprintw(3, FIELD_WIDTH * 2 + 4, "Level: %d", 0);
+
+
+    mvprintw(2, FIELD_WIDTH * 2 + 4, "Score: %d", 0);
+
+    mvprintw(5, (FIELD_WIDTH * 2 + 2 - (int)strlen("TETRIS")) / 2, "TETRIS");
+    mvprintw(8, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press Q to Quite")) / 2, "Press Q to Quite");
+    mvprintw(10, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press S to Start")) / 2, "Press S to Start");
+   
+}
+
+void drawGameInfo(GameInfo_t *info) {
+    clear();
+
+    if (info->level == -1) {//лучше проверять на NULL gameInfo поля
+        // Баннер Game Over
+        mvprintw(LINES/2 - 1, (COLS - 9) / 2, "GAME OVER");
+        mvprintw(LINES/2 + 1, (COLS - 27) / 2, "Press S to play again");
+        mvprintw(LINES/2 + 2, (COLS - 27) / 2, "Press Q to exit");
+    } else if (info->pause) {
+        // Баннер Paused
+        mvprintw(LINES/2, (COLS - 5) / 2, "PAUSE");
+    } else {
 
     for (int x = 0; x < FIELD_WIDTH * 2 + 2; x++)
         mvprintw(0, x, "#");
@@ -40,12 +79,9 @@ void draw_game(GameInfo_t *state, tet_state current_state) {
     for (int y = 0; y < FIELD_HEIGHT; y++) {
         mvprintw(y + 1, 0, "#"); 
         for (int x = 0; x < FIELD_WIDTH; x++) {
-            if (current_state == START || current_state == GAMEOVER) {
-                mvprintw(y + 1, x * 2 + 1, "  "); 
-            } else {
-                mvprintw(y + 1, x * 2 + 1,
-                         state->field[y][x] ? "<>" : "  ");
-            }
+            mvprintw(y + 1, x * 2 + 1,
+            info->field[y][x] ? "<>" : "  ");
+            
         }
         mvprintw(y + 1, FIELD_WIDTH * 2 + 1, "#"); 
     }
@@ -53,24 +89,11 @@ void draw_game(GameInfo_t *state, tet_state current_state) {
     for (int x = 0; x < FIELD_WIDTH * 2 + 2; x++)
         mvprintw(FIELD_HEIGHT + 1, x, "#");
 
-    mvprintw(2, FIELD_WIDTH * 2 + 4, "Score: %d", state->score);
-    mvprintw(3, FIELD_WIDTH * 2 + 4, "Level: %d", state->level);
-
-     if (current_state == MOVING){
-        print_center(FIELD_HEIGHT/2 - 1, "MOVING");
-     }
-
-    if (current_state == START) {
-        print_center(FIELD_HEIGHT/2 - 1, "Press S to Start");
-        print_center(FIELD_HEIGHT/2,     "Press Q to Quit");
-    } else if (current_state == PAUSE) {
-        print_center(FIELD_HEIGHT/2, "PAUSED");
-        print_center(FIELD_HEIGHT/2 + 1, "Press P to continue");
-    } else if (current_state == GAMEOVER) {
-        print_center(FIELD_HEIGHT/2 - 1, "GAME OVER");
-        print_center(FIELD_HEIGHT/2,     "Press S to Restart");
-        print_center(FIELD_HEIGHT/2 + 1, "Press Q to Exit");
-    }
+    mvprintw(10, FIELD_WIDTH * 2 + 4, "Score: %d", info->score);
+    mvprintw(11, FIELD_WIDTH * 2 + 4, "High:  %d", info->high_score);
+    mvprintw(12, FIELD_WIDTH * 2 + 4, "Level: %d", info->level);
+    mvprintw(13, FIELD_WIDTH * 2 + 4, "Speed: %d", info->speed);
+}
 
     refresh();
 }
