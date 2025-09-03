@@ -1,25 +1,37 @@
 #include "frontend.h"
 
 UserAction_t getUserAction() {
+    UserAction_t action = ERR;
     int ch = getch(); 
     switch (ch) {
-        case KEY_LEFT:
-            return Left;
-        case KEY_RIGHT:
-            return Right;
-        case KEY_UP:
-            return Up;      
-        case KEY_DOWN:
-            return Down;    
-        case 'r': case 'R':         
-            return Action;
-        case 'p': case 'P':   
-            return Pause;
-        case 'q': case 'Q':   
-            return Terminate;
         case 's': case 'S':   
-            return Start; 
+            action = Start; 
+            break;
+        case 'p': case 'P':   
+            action = Pause;
+            break;
+        case 'q': case 'Q':   
+            action = Terminate;
+            break;
+        case KEY_LEFT:
+            action = Left;
+            break;
+        case KEY_RIGHT:
+            action = Right;
+            break;
+        case KEY_UP:
+            action = Up;  
+            break;    
+        case KEY_DOWN:
+            action = Down;  
+            break;  
+        case 'r': case 'R':         
+            action = Action;
+            break; 
+            //подуамть над default? Может норм, если какое-то из UserAction_t будет возвращаться если нет нажатия
     }
+
+    return action;
 }
 
 void print_center(int row, const char *msg) {

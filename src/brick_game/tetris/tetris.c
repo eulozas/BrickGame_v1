@@ -3,14 +3,15 @@
 int main() {  
     init_ncurses();
     print_overlay();  
-    UserAction_t action;    
+    UserAction_t action;  
+    nodelay(stdscr, FALSE);// getch ждёт 
     do {
-    action = getUserAction();
-    napms(50);
+        action = getUserAction();
     } while (action != Start && action != Terminate);
 
     if (action == Start) {
-    game_loop();
+        nodelay(stdscr, TRUE);// getch не ждёт 
+        game_loop();
     }
     endwin();
     return 0;
@@ -22,7 +23,6 @@ void init_ncurses() {
     cbreak();             // не ждать enter при вводе
     curs_set(FALSE); // не видеть курсор
     keypad(stdscr, TRUE); // стрелки
-    nodelay(stdscr, TRUE);// getch не ждёт
 }
 
 void game_loop() {
