@@ -1,5 +1,5 @@
 #include "backend.h"
-//#include "helpers.h"
+#include "helpers.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -7,17 +7,15 @@ static void initGameStruct(GameStruct_t *game){
     memset(game, 0, sizeof(GameStruct_t));
     game->score = 0;
     game->level = 0;
-    game->speed = 1;
+    game->speed = 0;
     game->pause = 0;
     game->running = 1;
     game->state = START;
     game->last_fall_time = 0;
     game->fall_delay = 1000; // 1 секунда
     
-    if (/*loadHighScore(&game->high_score)*/1) { //проверка загрузки файла с рекордом игры
-        game->high_score = -1;//тут будет функция, которая запишет в этц переменную рекорд игры
-    } else {
-        game->high_score = 0;
+    if (!loadHighScore(&game->high_score)) {
+        game->high_score = -1;
     }
 }
 
@@ -120,3 +118,15 @@ void freeGameInfo(GameInfo_t *info) {
     }
 }
 
+
+// ФИГУРЫ и действия, потом убрать в другой файл
+
+void spawn_new_piece(GameStruct_t *game){
+     game->field[game->currentY][game->currentX] = 1;
+    //нужно сгенерить новую фигуру для некст, а некст перенести в текущую
+}
+
+void move_piece_down(GameStruct_t *game){
+    game->field[game->currentY++][game->currentX] = 0;
+    game->field[game->currentY][game->currentX] = 1;
+}

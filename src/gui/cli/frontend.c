@@ -34,7 +34,7 @@ UserAction_t getUserAction() {
     return action;
 }
 
-void print_overlay(const char *game_name){
+void printOverlay(const char *game_name){
     clear();
     mvprintw(6, (FIELD_WIDTH * 2 + 2 - (int)strlen(game_name)) / 2, "%s", game_name);
     mvprintw(9, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press S to start")) / 2, "Press S to start");
@@ -72,7 +72,7 @@ void drawGameInfo(GameInfo_t *info) {
     clear();
 
     printField(info);
-//Поправить, на выходе из паузы управление появляется(когда сделаю верное условие выхода)
+
     if (info->level == 0) {
         // Баннер START
         mvprintw(6, (FIELD_WIDTH * 2 + 2 - (int)strlen("THE GAME")) / 2, "THE GAME");

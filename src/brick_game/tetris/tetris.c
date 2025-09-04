@@ -2,7 +2,7 @@
 
 int main() {  
     init_ncurses();
-    print_overlay("TETRIS"); 
+    printOverlay("TETRIS"); 
     UserAction_t action;  
     nodelay(stdscr, FALSE);// getch ждёт 
     do {
@@ -11,7 +11,7 @@ int main() {
 
     if (action == Start) {
         nodelay(stdscr, TRUE);// getch не ждёт 
-        game_loop();
+        gameLoop();
     }
     endwin();
     return 0;
@@ -25,7 +25,7 @@ void init_ncurses() {
     keypad(stdscr, TRUE); // стрелки
 }
 
-void game_loop() {
+void gameLoop() {
 
     bool break_flag = TRUE;
     int hold = 0;
@@ -37,11 +37,10 @@ void game_loop() {
         //тут создается впервые статик структура инфоигры, туда копируются некоторые поля в инфо структуру для отрисовки во фронте
         GameInfo_t snapshot = updateCurrentState(); 
         if (snapshot.field){ 
-        drawGameInfo(&snapshot);
+            drawGameInfo(&snapshot);
         }else{
             break_flag = FALSE;
         }
-        
         napms(200);
     }
 }

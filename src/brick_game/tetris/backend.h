@@ -9,8 +9,8 @@
 typedef struct {
     int field[FIELD_HEIGHT][FIELD_WIDTH];
     int next[4][4];  // next-фигура
-    //int currentPiece[4][4]; // текущая фигура
-    //int currentX, currentY;  
+    int currentPiece[4][4]; // текущая фигура
+    int currentX, currentY;  
     int score;
     int high_score;
     int level;
@@ -27,5 +27,10 @@ GameInfo_t mallocGameInfo();
 void copyGameInfo(GameStruct_t *game, GameInfo_t *info);
 void freeGameInfo(GameInfo_t *info);
 void restartGameStruct(GameStruct_t *game);
+
+
+// ФИГУРЫ и действия, потом убрать в другой файл
+void spawn_new_piece(GameStruct_t *game);
+void move_piece_down(GameStruct_t *game);
 
 #endif

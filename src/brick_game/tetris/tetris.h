@@ -7,6 +7,6 @@
 #include "../../gui/cli/frontend.h"
 
 void init_ncurses();
-void game_loop();
+void gameLoop();
 
 #endif

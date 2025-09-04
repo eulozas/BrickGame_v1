@@ -7,7 +7,7 @@
 
 
 UserAction_t getUserAction();
-void print_overlay(const char *game_name);
+void printOverlay(const char *game_name);
 void drawGameInfo(GameInfo_t *info);
 
 #endif

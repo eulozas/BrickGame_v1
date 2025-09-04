@@ -1,8 +1,10 @@
 #include "fsm.h"
-#include <time.h>
+
 
 long getCurrentTimeMs() {
-    return (long)(clock() * 1000 / CLOCKS_PER_SEC);
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return tv.tv_sec * 1000L + tv.tv_usec / 1000L;
 }
 
 void on_start_state(UserAction_t action, GameStruct_t *game){
@@ -10,6 +12,7 @@ void on_start_state(UserAction_t action, GameStruct_t *game){
     {
         case Start:
             game->level = 1;
+            game->speed = 1;
             if(game->high_score == -1){
                 game->state = FILE_ERROR_STATE;
             }else{
@@ -26,9 +29,8 @@ void on_start_state(UserAction_t action, GameStruct_t *game){
 }
 
 void on_spawn_state(GameStruct_t *game){
-    //переместить некст фигуру в текущую с начальными координатами
-    //создать фигуру некст
-
+    
+    spawn_new_piece(game);
     // if (1){//проверить поместиться ли на поле новая фигура
     //     game->state = GAMEOVER;
     // }
@@ -73,7 +75,7 @@ void on_moving_state(UserAction_t action, GameStruct_t *game){
 
 void on_shifting_state(UserAction_t action, GameStruct_t *game) {
     if (1) {//проверить можно ли подвинуть вниз фигуру
-        //moveDown(game);
+        move_piece_down(game);
         game->state = MOVING;
     } else {
         game->state = ATTACHING;
@@ -130,7 +132,7 @@ void on_file_error_state(UserAction_t action, GameStruct_t *game){
     {
         case Start:
             game->state = SPAWN;
-            game->high_score = 0;
+            game->high_score = -1;//подумать какое значение оставить
             break;
         case Terminate:
             game->state = EXIT_STATE;
