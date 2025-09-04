@@ -26,5 +26,6 @@ GameStruct_t *getGameStruct();
 GameInfo_t mallocGameInfo();
 void copyGameInfo(GameStruct_t *game, GameInfo_t *info);
 void freeGameInfo(GameInfo_t *info);
+void restartGameStruct(GameStruct_t *game);
 
 #endif

@@ -2,7 +2,7 @@
 
 int main() {  
     init_ncurses();
-    print_overlay();  
+    print_overlay("TETRIS"); 
     UserAction_t action;  
     nodelay(stdscr, FALSE);// getch ждёт 
     do {
@@ -29,15 +29,18 @@ void game_loop() {
 
     bool break_flag = TRUE;
     int hold = 0;
+
     while (break_flag) {
         UserAction_t action = getUserAction();
         userInput(action, hold);//тут меняются состояния автомата и игровая структура
         GameInfo_t snapshot = updateCurrentState(); //делается снимок игровой структуры, копируются некоторые поля в инфо структуру для отрисовки во фронте
         drawGameInfo(&snapshot);
-        freeGameInfo(&snapshot);
-
-        if (action == Terminate) break_flag = FALSE;//придумать другой выход из цикла!
         
+        if (action == Terminate){
+            freeGameInfo(&snapshot);//подумать
+            break_flag = FALSE;
+        } //придумать другой выход из цикла!
         napms(200);
     }
+
 }

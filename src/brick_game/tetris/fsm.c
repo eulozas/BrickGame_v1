@@ -9,7 +9,6 @@ void on_start_state(UserAction_t action, GameStruct_t *game){
     switch (action)
     {
         case Start:
-            //resetGame(game);
             game->state = SPAWN;
             break;
         case Terminate:
@@ -111,12 +110,16 @@ void userInput(UserAction_t action, bool hold) {
 
         case GAMEOVER:
         if (action == Start) {
-            //restartGame(game);
-            game->state = SPAWN;
+            restartGameStruct(game);
+            game->state = SPAWN;//??????
         }
         break;
 
         case EXIT_STATE:
+        game->running = 0;
+        break;
+
+        case FILE_ERROR_STATE:
         game->running = 0;
         break;
 
@@ -127,8 +130,17 @@ void userInput(UserAction_t action, bool hold) {
 }
 
 GameInfo_t updateCurrentState() {
+
+    static GameInfo_t info;
+    static int init_info = 0;
+
     GameStruct_t *game = getGameStruct();
-    GameInfo_t info = mallocGameInfo();
+
+    if (!init_info) {
+        info = mallocGameInfo();
+        init_info = 1;
+    }
+    
     copyGameInfo(game, &info);
     return info;
 }

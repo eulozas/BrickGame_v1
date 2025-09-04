@@ -39,37 +39,13 @@ void print_center(int row, const char *msg) {
     mvprintw(row, col, "%s", msg);
 }
 
-void print_overlay(){
+void print_overlay(const char *game_name){
     clear();
-    for (int x = 0; x < FIELD_WIDTH * 2 + 2; x++)
-        mvprintw(0, x, "-");
+    mvprintw(5, (FIELD_WIDTH * 2 + 2 - (int)strlen(game_name)) / 2, game_name);
+    mvprintw(7, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press S to start")) / 2, "Press S to start");
+    mvprintw(9, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press Q to exit")) / 2, "Press Q to exit");
     
-    for (int x = 0; x < FIELD_WIDTH * 2 + 2; x++)
-        mvprintw(0, x, "-");
-
-    for (int y = 0; y < FIELD_HEIGHT; y++) {
-        mvprintw(y + 1, 0, "|"); 
-        for (int x = 0; x < FIELD_WIDTH; x++) {
-            mvprintw(y + 1, x * 2 + 1,
-            "  ");
-            
-        }
-        mvprintw(y + 1, FIELD_WIDTH * 2 + 1, "|"); 
-    }
-
-    for (int x = 0; x < FIELD_WIDTH * 2 + 2; x++)
-        mvprintw(FIELD_HEIGHT + 1, x, "-");
-
-    mvprintw(2, FIELD_WIDTH * 2 + 4, "Score: %d", 0);
-    mvprintw(3, FIELD_WIDTH * 2 + 4, "Level: %d", 0);
-
-
-    mvprintw(2, FIELD_WIDTH * 2 + 4, "Score: %d", 0);
-
-    mvprintw(5, (FIELD_WIDTH * 2 + 2 - (int)strlen("TETRIS")) / 2, "TETRIS");
-    mvprintw(8, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press Q to Quite")) / 2, "Press Q to Quite");
-    mvprintw(10, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press S to Start")) / 2, "Press S to Start");
-   
+    refresh();
 }
 
 void drawGameInfo(GameInfo_t *info) {
@@ -77,13 +53,24 @@ void drawGameInfo(GameInfo_t *info) {
 
     if (info->level == -1) {//лучше проверять на NULL gameInfo поля
         // Баннер Game Over
-        mvprintw(LINES/2 - 1, (COLS - 9) / 2, "GAME OVER");
-        mvprintw(LINES/2 + 1, (COLS - 27) / 2, "Press S to play again");
-        mvprintw(LINES/2 + 2, (COLS - 27) / 2, "Press Q to exit");
-    } else if (info->pause) {
+        mvprintw(5, (FIELD_WIDTH * 2 + 2 - (int)strlen("GAME OVER")) / 2, "GAME OVER");
+        mvprintw(7, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press S to play again")) / 2, "Press S to play again");
+        mvprintw(9, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press Q to exit")) / 2, "Press Q to exit");
+    } else if (info->level == 0) {
+        // Баннер START
+        mvprintw(7, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press S to start")) / 2, "Press S to start");
+        mvprintw(9, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press Q to exit")) / 2, "Press Q to exit");
+        
+    } else if (info->high_score == -1) {
+        // Баннер FILE_ERROR
+        mvprintw(5, (FIELD_WIDTH * 2 + 2 - (int)strlen("Error, high score file not found")) / 2, "Error, high score file not found");
+        mvprintw(7, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press S to start without high score info")) / 2, "Press S to start without high score info");
+        mvprintw(9, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press Q to exit")) / 2, "Press Q to exit");
+        
+    }else if(info->pause){
         // Баннер Paused
-        mvprintw(LINES/2, (COLS - 5) / 2, "PAUSE");
-    } else {
+        mvprintw(5, (FIELD_WIDTH * 2 + 2 - (int)strlen("PAUSE")) / 2, "PAUSE");
+    }else {
 
     for (int x = 0; x < FIELD_WIDTH * 2 + 2; x++)
         mvprintw(0, x, "#");
