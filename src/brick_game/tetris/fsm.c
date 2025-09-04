@@ -6,10 +6,15 @@ long getCurrentTimeMs() {
 }
 
 void on_start_state(UserAction_t action, GameStruct_t *game){
-    switch (action)
+        switch (action)
     {
         case Start:
-            game->state = SPAWN;
+            game->level = 1;
+            if(game->high_score == -1){
+                game->state = FILE_ERROR_STATE;
+            }else{
+                game->state = SPAWN;
+            }
             break;
         case Terminate:
             game->state = EXIT_STATE;
@@ -24,12 +29,12 @@ void on_spawn_state(GameStruct_t *game){
     //переместить некст фигуру в текущую с начальными координатами
     //создать фигуру некст
 
-    if (1){//проверить поместиться ли на поле новая фигура
-        game->state = GAMEOVER;
-    }
-    else{
+    // if (1){//проверить поместиться ли на поле новая фигура
+    //     game->state = GAMEOVER;
+    // }
+    // else{
         game->state = MOVING;
-    }           
+    //}           
 }
 
 void on_moving_state(UserAction_t action, GameStruct_t *game){
@@ -48,6 +53,7 @@ void on_moving_state(UserAction_t action, GameStruct_t *game){
         break;
         case Pause:
         game->state = PAUSE;
+        game->pause = 1;
         break;
         case Terminate:
         game->state = EXIT_STATE;
@@ -81,6 +87,60 @@ void on_attaching_state(UserAction_t action, GameStruct_t *game) {
         game->state = SPAWN;
 }
 
+
+void on_pause_state(UserAction_t action, GameStruct_t *game){
+
+    switch (action)
+    {
+        case Pause:
+            game->pause = 0;
+            game->state = MOVING;
+            break;
+        case Terminate:
+            game->state = EXIT_STATE;
+            break;
+        default:
+            break;
+    }
+}
+
+void on_gameover_state(UserAction_t action, GameStruct_t *game){
+
+    switch (action)
+    {
+        case Start:
+            restartGameStruct(game);
+            break;
+        case Terminate:
+            game->state = EXIT_STATE;
+            break;
+        default:
+            break;
+    }
+}
+
+
+void on_exit_state(GameStruct_t *game){
+    game->running = 0;
+}
+
+void on_file_error_state(UserAction_t action, GameStruct_t *game){
+
+    switch (action)
+    {
+        case Start:
+            game->state = SPAWN;
+            game->high_score = 0;
+            break;
+        case Terminate:
+            game->state = EXIT_STATE;
+            break;
+        default:
+            break;
+    }
+}
+
+
 void userInput(UserAction_t action, bool hold) {
     GameStruct_t *game = getGameStruct();
     switch (game->state) {
@@ -105,22 +165,19 @@ void userInput(UserAction_t action, bool hold) {
         break;
 
         case PAUSE:
-        if (action == Pause) game->state = MOVING;
+        on_pause_state(action, game);
         break;
 
         case GAMEOVER:
-        if (action == Start) {
-            restartGameStruct(game);
-            game->state = SPAWN;//??????
-        }
+        on_gameover_state(action, game);
         break;
 
         case EXIT_STATE:
-        game->running = 0;
+        on_exit_state(game);
         break;
 
         case FILE_ERROR_STATE:
-        game->running = 0;
+        on_file_error_state(action, game);
         break;
 
         default: break;
@@ -142,5 +199,8 @@ GameInfo_t updateCurrentState() {
     }
     
     copyGameInfo(game, &info);
+    if(game->running == 0){
+        freeGameInfo(&info);
+    }
     return info;
 }

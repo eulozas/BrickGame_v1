@@ -32,15 +32,16 @@ void game_loop() {
 
     while (break_flag) {
         UserAction_t action = getUserAction();
-        userInput(action, hold);//тут меняются состояния автомата и игровая структура
-        GameInfo_t snapshot = updateCurrentState(); //делается снимок игровой структуры, копируются некоторые поля в инфо структуру для отрисовки во фронте
+        //тут создается впервые статик структура игры и меняются состояния автомата и игровая структура
+        userInput(action, hold);
+        //тут создается впервые статик структура инфоигры, туда копируются некоторые поля в инфо структуру для отрисовки во фронте
+        GameInfo_t snapshot = updateCurrentState(); 
+        if (snapshot.field){ 
         drawGameInfo(&snapshot);
-        
-        if (action == Terminate){
-            freeGameInfo(&snapshot);//подумать
+        }else{
             break_flag = FALSE;
-        } //придумать другой выход из цикла!
+        }
+        
         napms(200);
     }
-
 }

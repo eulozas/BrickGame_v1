@@ -34,44 +34,16 @@ UserAction_t getUserAction() {
     return action;
 }
 
-void print_center(int row, const char *msg) {
-    int col = (FIELD_WIDTH * 2 + 2 - (int)strlen(msg)) / 2;
-    mvprintw(row, col, "%s", msg);
-}
-
 void print_overlay(const char *game_name){
     clear();
-    mvprintw(5, (FIELD_WIDTH * 2 + 2 - (int)strlen(game_name)) / 2, game_name);
-    mvprintw(7, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press S to start")) / 2, "Press S to start");
-    mvprintw(9, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press Q to exit")) / 2, "Press Q to exit");
+    mvprintw(6, (FIELD_WIDTH * 2 + 2 - (int)strlen(game_name)) / 2, "%s", game_name);
+    mvprintw(9, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press S to start")) / 2, "Press S to start");
+    mvprintw(10, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press Q to exit")) / 2, "Press Q to exit");
     
     refresh();
 }
 
-void drawGameInfo(GameInfo_t *info) {
-    clear();
-
-    if (info->level == -1) {//лучше проверять на NULL gameInfo поля
-        // Баннер Game Over
-        mvprintw(5, (FIELD_WIDTH * 2 + 2 - (int)strlen("GAME OVER")) / 2, "GAME OVER");
-        mvprintw(7, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press S to play again")) / 2, "Press S to play again");
-        mvprintw(9, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press Q to exit")) / 2, "Press Q to exit");
-    } else if (info->level == 0) {
-        // Баннер START
-        mvprintw(7, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press S to start")) / 2, "Press S to start");
-        mvprintw(9, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press Q to exit")) / 2, "Press Q to exit");
-        
-    } else if (info->high_score == -1) {
-        // Баннер FILE_ERROR
-        mvprintw(5, (FIELD_WIDTH * 2 + 2 - (int)strlen("Error, high score file not found")) / 2, "Error, high score file not found");
-        mvprintw(7, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press S to start without high score info")) / 2, "Press S to start without high score info");
-        mvprintw(9, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press Q to exit")) / 2, "Press Q to exit");
-        
-    }else if(info->pause){
-        // Баннер Paused
-        mvprintw(5, (FIELD_WIDTH * 2 + 2 - (int)strlen("PAUSE")) / 2, "PAUSE");
-    }else {
-
+void printField(GameInfo_t *info){
     for (int x = 0; x < FIELD_WIDTH * 2 + 2; x++)
         mvprintw(0, x, "#");
 
@@ -87,12 +59,52 @@ void drawGameInfo(GameInfo_t *info) {
 
     for (int x = 0; x < FIELD_WIDTH * 2 + 2; x++)
         mvprintw(FIELD_HEIGHT + 1, x, "#");
-
-    mvprintw(10, FIELD_WIDTH * 2 + 4, "Score: %d", info->score);
-    mvprintw(11, FIELD_WIDTH * 2 + 4, "High:  %d", info->high_score);
-    mvprintw(12, FIELD_WIDTH * 2 + 4, "Level: %d", info->level);
-    mvprintw(13, FIELD_WIDTH * 2 + 4, "Speed: %d", info->speed);
 }
+
+void print_stat(GameInfo_t *info){
+    mvprintw(8, FIELD_WIDTH * 2 + 4, "Score: %d", info->score);
+    mvprintw(9, FIELD_WIDTH * 2 + 4, "High:  %d", info->high_score);
+    mvprintw(10, FIELD_WIDTH * 2 + 4, "Level: %d", info->level);
+    mvprintw(11, FIELD_WIDTH * 2 + 4, "Speed: %d", info->speed);
+}
+
+void drawGameInfo(GameInfo_t *info) {
+    clear();
+
+    printField(info);
+//Поправить, на выходе из паузы управление появляется(когда сделаю верное условие выхода)
+    if (info->level == 0) {
+        // Баннер START
+        mvprintw(6, (FIELD_WIDTH * 2 + 2 - (int)strlen("THE GAME")) / 2, "THE GAME");
+        mvprintw(7, (FIELD_WIDTH * 2 + 2 - (int)strlen("is ready to start")) / 2, "is ready to start");
+        mvprintw(9, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press S to start")) / 2, "Press S to start");
+        mvprintw(10, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press Q to exit")) / 2, "Press Q to exit");
+    }else if(info->pause == 1){
+        // Баннер Paused
+        mvprintw(5, (FIELD_WIDTH * 2 + 2 - (int)strlen("PAUSE")) / 2, "PAUSE");
+        mvprintw(7, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press P to continue")) / 2, "Press P to continue");
+        mvprintw(9, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press Q to exit")) / 2, "Press Q to exit");
+    }else if (info->level == -1) { //лучше проверять на NULL gameInfo поля
+        // Баннер GAMEOVER
+        mvprintw(5, (FIELD_WIDTH * 2 + 2 - (int)strlen("GAME OVER")) / 2, "GAME OVER");
+        mvprintw(7, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press S to play again")) / 2, "Press S to play again");
+        mvprintw(9, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press Q to exit")) / 2, "Press Q to exit");   
+    } else if (info->high_score == -1) {
+        // Баннер FILE_ERROR
+        mvprintw(4, (FIELD_WIDTH * 2 + 2 - (int)strlen("ERROR")) / 2, "ERROR");
+        mvprintw(5, (FIELD_WIDTH * 2 + 2 - (int)strlen("high score file")) / 2, "high score file");
+        mvprintw(6, (FIELD_WIDTH * 2 + 2 - (int)strlen("not found")) / 2, "not found");
+        mvprintw(8, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press S")) / 2, "Press S");
+        mvprintw(9, (FIELD_WIDTH * 2 + 2 - (int)strlen("to start anyway")) / 2, "to start anyway");
+        mvprintw(10, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press Q to exit")) / 2, "Press Q to exit");
+    }else{
+        mvprintw(20, FIELD_WIDTH * 2 + 4, "P - Pause");
+        mvprintw(20, FIELD_WIDTH * 2 + 14, "Q - Exit");
+    }
+
+    print_stat(info);
+
+ 
 
     refresh();
 }
