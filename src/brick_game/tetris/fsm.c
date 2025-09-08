@@ -139,39 +139,30 @@ void userInput(UserAction_t action, bool hold) {
         case START:
         on_start_state(action, game);
         break;
-
         case SPAWN:
         on_spawn_state(game);
         break;
-
         case MOVING:
         on_moving_state(action, game);
         break;
-
         case SHIFTING:
         on_shifting_state(action, game);
         break;
-
         case ATTACHING:
         on_attaching_state(action, game);
         break;
-
         case PAUSE:
         on_pause_state(action, game);
         break;
-
         case GAMEOVER:
         on_gameover_state(action, game);
         break;
-
         case EXIT_STATE:
         on_exit_state(game);
         break;
-
         case FILE_ERROR_STATE:
         on_file_error_state(action, game);
         break;
-
         default: break;
     }
     //+логика для hold

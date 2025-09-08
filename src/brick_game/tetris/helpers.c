@@ -3,14 +3,12 @@
 int loadHighScore(int *high_score) {
     FILE *file = fopen("brick_game/tetris/highscore.txt", "r");
     if (!file) {
-        return 0;  // файла нет или ошибка открытия
+        return 0;
     }
-
     if (fscanf(file, "%d", high_score) != 1) {
         fclose(file);
-        return 0;  // не удалось считать число
+        return 0; 
     }
-
     fclose(file);
     return 1;
 }
@@ -18,12 +16,9 @@ int loadHighScore(int *high_score) {
 int saveHighScore(int high_score) {
     FILE *file = fopen("highscore.txt", "w");
     if (!file) {
-        // не удалось открыть файл для записи
         return 0;
     }
-
     fprintf(file, "%d\n", high_score);
     fclose(file);
-    return 1; // успех
+    return 1; 
 }
-

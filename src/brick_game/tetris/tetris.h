@@ -4,6 +4,7 @@
 #include <ncurses.h>
 #include "fsm.h"
 #include "backend.h"
+//#include "pieces.h"
 #include "../../gui/cli/frontend.h"
 
 void init_ncurses();

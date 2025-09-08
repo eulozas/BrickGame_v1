@@ -4,11 +4,11 @@ LDFLAGS = -lncurses
 
 all: tetris
 
-tetris: tetris.o backend.o frontend.o fsm.o helpers.o
+tetris: tetris.o backend.o frontend.o fsm.o helpers.o pieces.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 # компиляция tetris.o
-tetris.o: brick_game/tetris/tetris.c brick_game/tetris/backend.h brick_game/tetris/fsm.h brick_game/tetris/helpers.h
+tetris.o: brick_game/tetris/tetris.c brick_game/tetris/backend.h brick_game/tetris/fsm.h brick_game/tetris/helpers.h brick_game/tetris/pieces.h
 	$(CC) $(CFLAGS) -c brick_game/tetris/tetris.c -o tetris.o
 
 # компиляция backend.o
@@ -22,6 +22,10 @@ frontend.o: gui/cli/frontend.c brick_game/tetris/backend.h gui/cli/frontend.h br
 # компиляция fsm.o
 fsm.o: brick_game/tetris/fsm.c brick_game/tetris/fsm.h
 	$(CC) $(CFLAGS) -c brick_game/tetris/fsm.c -o fsm.o
+
+# компиляция pieces.o
+pieces.o: brick_game/tetris/pieces.c brick_game/tetris/pieces.h brick_game/tetris/backend.h brick_game/tetris/helpers.h
+	$(CC) $(CFLAGS) -c brick_game/tetris/pieces.c -o pieces.o
 
 # компиляция helpers.o
 helpers.o: brick_game/tetris/helpers.c brick_game/tetris/helpers.h

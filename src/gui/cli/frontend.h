@@ -2,7 +2,6 @@
 #define FRONTEND_H
 
 #include <ncurses.h>
-#include <string.h>
 #include "../../brick_game/tetris/tetris.h"
 
 

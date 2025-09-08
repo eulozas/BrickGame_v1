@@ -1,8 +1,12 @@
 #ifndef BACKEND_H
 #define BACKEND_H
 
+#define _POSIX_C_SOURCE 199309L 
 #include "types.h"
 #include <time.h>
+#include <stdlib.h>
+#include <string.h>
+#include "helpers.h"
 
 #define FIELD_WIDTH 10
 #define FIELD_HEIGHT 20
@@ -28,17 +32,7 @@ GameInfo_t mallocGameInfo();
 void copyGameInfo(GameStruct_t *game, GameInfo_t *info);
 void freeGameInfo(GameInfo_t *info);
 void restartGameStruct(GameStruct_t *game);
-int canSpawnPiece(GameStruct_t *game);
-int canMoveDown(GameStruct_t *game);
-long getCurrentTimeMs();
-
-
-// ФИГУРЫ и действия, потом убрать в другой файл
-void spawn_new_piece(GameStruct_t *game);
-int canMoveDown(GameStruct_t *game);
-void move_piece_down(GameStruct_t *game);
-void removeLine(GameStruct_t *game);
-void attachPiece(GameStruct_t *game);
 void clearField(GameStruct_t *game);
+long getCurrentTimeMs();
 
 #endif
