@@ -43,6 +43,20 @@ void printOverlay(const char *game_name){
     refresh();
 }
 
+void printNextPiece(GameInfo_t *info) {
+    int start_x = FIELD_WIDTH * 2 + 4;
+    int start_y = 2;
+
+    mvprintw(start_y - 1, start_x, "Next:");
+
+    for (int y = 0; y < 4; y++) {
+        for (int x = 0; x < 4; x++) {
+            mvprintw(start_y + y, start_x + x * 2,
+                     info->next[y][x] ? "<>" : "  ");
+        }
+    }
+}
+
 void printField(GameInfo_t *info){
     for (int x = 0; x < FIELD_WIDTH * 2 + 2; x++)
         mvprintw(0, x, "#");
@@ -59,6 +73,8 @@ void printField(GameInfo_t *info){
 
     for (int x = 0; x < FIELD_WIDTH * 2 + 2; x++)
         mvprintw(FIELD_HEIGHT + 1, x, "#");
+
+        printNextPiece(info);
 }
 
 void print_stat(GameInfo_t *info){
@@ -103,8 +119,6 @@ void drawGameInfo(GameInfo_t *info) {
     }
 
     print_stat(info);
-
- 
 
     refresh();
 }

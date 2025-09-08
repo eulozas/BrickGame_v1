@@ -15,33 +15,15 @@ int loadHighScore(int *high_score) {
     return 1;
 }
 
+int saveHighScore(int high_score) {
+    FILE *file = fopen("highscore.txt", "w");
+    if (!file) {
+        // не удалось открыть файл для записи
+        return 0;
+    }
 
+    fprintf(file, "%d\n", high_score);
+    fclose(file);
+    return 1; // успех
+}
 
-
-
-
-
-// int canMoveRight(GameStruct_t *game){
-//      return 1;
-//     //проверить можно ли сдвинуть вправо
-// }
-// void moveRight(GameStruct_t *game){
-//     game->field[game->currentY][game->currentX++] = 0;
-//     game->field[game->currentY][game->currentX] = 1;
-//     //сдвинуть вправо
-// }
-
-
-// int canMoveLeft(GameStruct_t *game){
-//      return 1;
-//     //проверить можно ли сдвинуть влево
-// }
-// void moveLeft(GameStruct_t *game){
- 
-//     //сдвинуть влево
-// }
-
-// void rotate_piece(GameStruct_t *game){
-//      return;
-//     //поворот фигуры
-// }

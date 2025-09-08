@@ -6,6 +6,7 @@
 //#include "backend.c"
 
 int loadHighScore(int *high_score);
+int saveHighScore(int high_score);
 
 // int canMoveLeft(GameStruct_t *game);
 // void moveLeft(GameStruct_t *game);

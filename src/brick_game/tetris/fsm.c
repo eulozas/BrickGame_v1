@@ -1,12 +1,5 @@
 #include "fsm.h"
 
-
-long getCurrentTimeMs() {
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    return tv.tv_sec * 1000L + tv.tv_usec / 1000L;
-}
-
 void on_start_state(UserAction_t action, GameStruct_t *game){
         switch (action)
     {
@@ -23,20 +16,19 @@ void on_start_state(UserAction_t action, GameStruct_t *game){
             game->state = EXIT_STATE;
             break;
         default:
-            game->state = START;
             break;
     }
 }
 
 void on_spawn_state(GameStruct_t *game){
-    
     spawn_new_piece(game);
-    // if (1){//проверить поместиться ли на поле новая фигура
-    //     game->state = GAMEOVER;
-    // }
-    // else{
+    if (canSpawnPiece(game)){
         game->state = MOVING;
-    //}           
+        game->last_fall_time = getCurrentTimeMs();
+    } else{
+        game->level = -1;
+        game->state = GAMEOVER;
+    }           
 }
 
 void on_moving_state(UserAction_t action, GameStruct_t *game){
@@ -74,7 +66,7 @@ void on_moving_state(UserAction_t action, GameStruct_t *game){
 }
 
 void on_shifting_state(UserAction_t action, GameStruct_t *game) {
-    if (1) {//проверить можно ли подвинуть вниз фигуру
+    if (canMoveDown(game)) {
         move_piece_down(game);
         game->state = MOVING;
     } else {
@@ -83,12 +75,11 @@ void on_shifting_state(UserAction_t action, GameStruct_t *game) {
 }
 
 void on_attaching_state(UserAction_t action, GameStruct_t *game) {
-    if (1) {//проверить можно ли убрать линии
-        //removeLine(game);
-    } 
-        game->state = SPAWN;
+    attachPiece(game);
+    removeLine(game);
+    game->last_fall_time = getCurrentTimeMs();
+    game->state = SPAWN;
 }
-
 
 void on_pause_state(UserAction_t action, GameStruct_t *game){
 
@@ -107,7 +98,7 @@ void on_pause_state(UserAction_t action, GameStruct_t *game){
 }
 
 void on_gameover_state(UserAction_t action, GameStruct_t *game){
-
+    clearField(game);
     switch (action)
     {
         case Start:
@@ -141,7 +132,6 @@ void on_file_error_state(UserAction_t action, GameStruct_t *game){
             break;
     }
 }
-
 
 void userInput(UserAction_t action, bool hold) {
     GameStruct_t *game = getGameStruct();
@@ -184,7 +174,6 @@ void userInput(UserAction_t action, bool hold) {
 
         default: break;
     }
-
     //+логика для hold
 }
 

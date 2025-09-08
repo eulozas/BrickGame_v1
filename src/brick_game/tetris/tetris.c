@@ -41,6 +41,6 @@ void gameLoop() {
         }else{
             break_flag = FALSE;
         }
-        napms(200);
+        napms(50);
     }
 }
