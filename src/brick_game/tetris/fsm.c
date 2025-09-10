@@ -21,7 +21,7 @@ void on_start_state(UserAction_t action, GameStruct_t *game){
 }
 
 void on_spawn_state(GameStruct_t *game){
-    spawn_new_piece(game);
+    spawnNewPiece(game);
     if (canSpawnPiece(game)){
         game->state = MOVING;
         game->last_fall_time = getCurrentTimeMs();
@@ -34,16 +34,19 @@ void on_spawn_state(GameStruct_t *game){
 void on_moving_state(UserAction_t action, GameStruct_t *game){
     switch (action){
         case Up:
-        //moveup(game);
         break;
         case Down:
-        //movedown(game);
+        moveDown(game);
+        game->state = ATTACHING;
         break;
         case Right:
-        //moveright(game);
+        moveRight(game);
         break;
         case Left:
-        //moveleft(game);
+        moveLeft(game);
+        break;
+        case Action:
+        //rotatePiece(game);
         break;
         case Pause:
         game->state = PAUSE;
@@ -67,7 +70,7 @@ void on_moving_state(UserAction_t action, GameStruct_t *game){
 
 void on_shifting_state(UserAction_t action, GameStruct_t *game) {
     if (canMoveDown(game)) {
-        move_piece_down(game);
+        autoMoveDown(game);
         game->state = MOVING;
     } else {
         game->state = ATTACHING;
@@ -82,9 +85,7 @@ void on_attaching_state(UserAction_t action, GameStruct_t *game) {
 }
 
 void on_pause_state(UserAction_t action, GameStruct_t *game){
-
-    switch (action)
-    {
+    switch (action) {
         case Pause:
             game->pause = 0;
             game->state = MOVING;
@@ -99,8 +100,7 @@ void on_pause_state(UserAction_t action, GameStruct_t *game){
 
 void on_gameover_state(UserAction_t action, GameStruct_t *game){
     clearField(game);
-    switch (action)
-    {
+    switch (action) {
         case Start:
             restartGameStruct(game);
             break;
@@ -118,9 +118,7 @@ void on_exit_state(GameStruct_t *game){
 }
 
 void on_file_error_state(UserAction_t action, GameStruct_t *game){
-
-    switch (action)
-    {
+    switch (action){
         case Start:
             game->state = SPAWN;
             game->high_score = -1;//подумать какое значение оставить

@@ -58,10 +58,13 @@ static const int tetrominos[NUM_TETROMINOS][4][4] = {
     }
 };
 
-void spawn_new_piece(GameStruct_t *game);
 int canSpawnPiece(GameStruct_t *game);
+void spawnNewPiece(GameStruct_t *game);
 int canMoveDown(GameStruct_t *game);
-void move_piece_down(GameStruct_t *game);
+void autoMoveDown(GameStruct_t *game);
+void moveDown(GameStruct_t *game);
+void moveLeft(GameStruct_t *game);
+void moveRight(GameStruct_t *game);
 void removeLine(GameStruct_t *game);
 void attachPiece(GameStruct_t *game);
 void randomPiece(int dest[4][4]);

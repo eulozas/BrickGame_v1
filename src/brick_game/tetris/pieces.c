@@ -29,13 +29,6 @@ void clear_piece_from_field(GameStruct_t *game) {
     }
 }
 
-void spawn_new_piece(GameStruct_t *game){
-    memcpy(game->currentPiece, game->next, sizeof(int) * 16);
-    game->currentX = FIELD_WIDTH / 2 - 2;
-    game->currentY = -2;
-    randomPiece(game->next);
-}
-
 int canSpawnPiece(GameStruct_t *game) {
     for (int y = 0; y < 4; y++) {
         for (int x = 0; x < 4; x++) {
@@ -58,6 +51,26 @@ int canSpawnPiece(GameStruct_t *game) {
     return 1;
 }
 
+void spawnNewPiece(GameStruct_t *game){
+    memcpy(game->currentPiece, game->next, sizeof(int) * 16);
+    game->currentX = FIELD_WIDTH / 2 - 2;
+    game->currentY = -2;
+    randomPiece(game->next);
+}
+
+void attachPiece(GameStruct_t *game) {
+    for (int y = 0; y < 4; y++) {
+        for (int x = 0; x < 4; x++) {
+            if (!game->currentPiece[y][x]) continue;
+            int fx = game->currentX + x;
+            int fy = game->currentY + y;
+            if (fy >= 0 && fy < FIELD_HEIGHT && fx >= 0 && fx < FIELD_WIDTH) {
+                game->field[fy][fx] = 1; 
+            }
+        }
+    }
+}
+
 int canMoveDown(GameStruct_t *game) {
     for (int y = 0; y < 4; y++) {
         for (int x = 0; x < 4; x++) {
@@ -73,24 +86,61 @@ int canMoveDown(GameStruct_t *game) {
     return 1;
 }
 
-void move_piece_down(GameStruct_t *game){
+void autoMoveDown(GameStruct_t *game){
     clear_piece_from_field(game);
     game->currentY++;
     draw_piece_to_field(game);
 }
 
-void attachPiece(GameStruct_t *game) {
+void moveDown(GameStruct_t *game) {
+    clear_piece_from_field(game);
+        while (canMoveDown(game)) {
+            game->currentY++;
+        }
+    draw_piece_to_field(game);
+}
+
+int canMoveLeft(GameStruct_t *game) {
     for (int y = 0; y < 4; y++) {
         for (int x = 0; x < 4; x++) {
             if (!game->currentPiece[y][x]) continue;
-            int fx = game->currentX + x;
+            int fx = game->currentX + x - 1;
             int fy = game->currentY + y;
-            if (fy >= 0 && fy < FIELD_HEIGHT && fx >= 0 && fx < FIELD_WIDTH) {
-                game->field[fy][fx] = 1; 
-            }
+
+            if (fx < 0) return 0;
+            if (fy >= 0 && game->field[fy][fx] == 1) return 0;
         }
     }
+    return 1;
 }
+
+void moveLeft(GameStruct_t *game) {
+    clear_piece_from_field(game);
+    if (canMoveLeft(game)) game->currentX--;
+    draw_piece_to_field(game);
+}
+
+int canMoveRight(GameStruct_t *game) {
+    for (int y = 0; y < 4; y++) {
+        for (int x = 0; x < 4; x++) {
+            if (!game->currentPiece[y][x]) continue;
+            int fx = game->currentX + x + 1;
+            int fy = game->currentY + y;
+
+            if (fx >= FIELD_WIDTH) return 0;
+            if (fy >= 0 && game->field[fy][fx] == 1) return 0;
+        }
+    }
+    return 1;
+}
+
+void moveRight(GameStruct_t *game) {
+    clear_piece_from_field(game);
+    if (canMoveRight(game)) game->currentX++;
+    draw_piece_to_field(game);
+}
+
+
 
 void removeLine(GameStruct_t *game) {
     int lines_cleared = 0;
