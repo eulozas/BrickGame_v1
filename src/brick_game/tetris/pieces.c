@@ -226,7 +226,7 @@ void removeLine(GameStruct_t *game) {
         default: break;
     }
 
-    int new_level = game->score / 600;
+    int new_level = (game->score / 600) + 1;
     if (new_level > game->level) {
         game->level = new_level > 10 ? 10 : new_level;
         game->fall_delay = FALL_DELAY - (game->level * 100);

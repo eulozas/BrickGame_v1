@@ -114,8 +114,12 @@ void drawGameInfo(GameInfo_t *info) {
         mvprintw(9, (FIELD_WIDTH * 2 + 2 - (int)strlen("to start anyway")) / 2, "to start anyway");
         mvprintw(10, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press Q to exit")) / 2, "Press Q to exit");
     }else{
-        mvprintw(20, FIELD_WIDTH * 2 + 4, "P - Pause");
-        mvprintw(20, FIELD_WIDTH * 2 + 14, "Q - Exit");
+        mvprintw(17, FIELD_WIDTH * 2 + 4, "KEY RIGHT - Move right");
+        mvprintw(18, FIELD_WIDTH * 2 + 4, "KEY LEFT - Move left");
+        mvprintw(19, FIELD_WIDTH * 2 + 4, "KEY DOWN - Fall down");
+        mvprintw(20, FIELD_WIDTH * 2 + 4, "R - Rotate");
+        mvprintw(21, FIELD_WIDTH * 2 + 4, "P - Pause");
+        mvprintw(21, FIELD_WIDTH * 2 + 14, "Q - Exit");
     }
 
     print_stat(info);
