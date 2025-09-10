@@ -10,6 +10,7 @@
 
 #define FIELD_WIDTH 10
 #define FIELD_HEIGHT 20
+#define FALL_DELAY 1200
 
 typedef struct {
     int field[FIELD_HEIGHT][FIELD_WIDTH];

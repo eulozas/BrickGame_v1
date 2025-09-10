@@ -10,7 +10,7 @@ static void initGameStruct(GameStruct_t *game){
     game->running = 1;
     game->state = START;
     game->last_fall_time = getCurrentTimeMs();
-    game->fall_delay = 1200; // 0.8 секунды
+    game->fall_delay = FALL_DELAY;
 
     srand(time(NULL));
     randomPiece(game->next);

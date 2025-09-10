@@ -58,19 +58,6 @@ void spawnNewPiece(GameStruct_t *game){
     randomPiece(game->next);
 }
 
-void attachPiece(GameStruct_t *game) {
-    for (int y = 0; y < 4; y++) {
-        for (int x = 0; x < 4; x++) {
-            if (!game->currentPiece[y][x]) continue;
-            int fx = game->currentX + x;
-            int fy = game->currentY + y;
-            if (fy >= 0 && fy < FIELD_HEIGHT && fx >= 0 && fx < FIELD_WIDTH) {
-                game->field[fy][fx] = 1; 
-            }
-        }
-    }
-}
-
 int canMoveDown(GameStruct_t *game) {
     for (int y = 0; y < 4; y++) {
         for (int x = 0; x < 4; x++) {
@@ -191,8 +178,21 @@ void rotatePiece(GameStruct_t *game) {
     }
 }
 
+void attachPiece(GameStruct_t *game) {
+    for (int y = 0; y < 4; y++) {
+        for (int x = 0; x < 4; x++) {
+            if (!game->currentPiece[y][x]) continue;
+            int fx = game->currentX + x;
+            int fy = game->currentY + y;
+            if (fy >= 0 && fy < FIELD_HEIGHT && fx >= 0 && fx < FIELD_WIDTH) {
+                game->field[fy][fx] = 1; 
+            }
+        }
+    }
+}
+
 void removeLine(GameStruct_t *game) {
-    int lines_cleared = 0;
+        int lines_cleared = 0;
 
     for (int y = 0; y < FIELD_HEIGHT; y++) {
         int full = 1;
@@ -204,13 +204,11 @@ void removeLine(GameStruct_t *game) {
         }
 
         if (full) {
-            // сдвигаем все строки вниз
             for (int ty = y; ty > 0; ty--) {
                 for (int x = 0; x < FIELD_WIDTH; x++) {
                     game->field[ty][x] = game->field[ty-1][x];
                 }
             }
-            // обнуляем верхнюю строку
             for (int x = 0; x < FIELD_WIDTH; x++) {
                 game->field[0][x] = 0;
             }
@@ -227,6 +225,14 @@ void removeLine(GameStruct_t *game) {
         case 4: game->score += 1500; break;
         default: break;
     }
+
+    int new_level = game->score / 600;
+    if (new_level > game->level) {
+        game->level = new_level > 10 ? 10 : new_level;
+        game->fall_delay = FALL_DELAY - (game->level * 100);
+        if (game->fall_delay < 100) game->fall_delay = 100;
+    }
+    game->speed = game->level;
 
     if (game->score > game->high_score) {
         game->high_score = game->score;
