@@ -14,7 +14,7 @@ int loadHighScore(int *high_score) {
 }
 
 int saveHighScore(int high_score) {
-    FILE *file = fopen("highscore.txt", "w");
+    FILE *file = fopen("brick_game/tetris/highscore.txt", "w");
     if (!file) {
         return 0;
     }

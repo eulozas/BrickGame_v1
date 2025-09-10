@@ -46,7 +46,7 @@ void on_moving_state(UserAction_t action, GameStruct_t *game){
         moveLeft(game);
         break;
         case Action:
-        //rotatePiece(game);
+        rotatePiece(game);
         break;
         case Pause:
         game->state = PAUSE;

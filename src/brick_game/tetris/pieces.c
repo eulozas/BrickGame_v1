@@ -140,7 +140,37 @@ void moveRight(GameStruct_t *game) {
     draw_piece_to_field(game);
 }
 
+int canRotate(GameStruct_t *game, int rotated[4][4]) {
+    for (int y = 0; y < 4; y++) {
+        for (int x = 0; x < 4; x++) {
+            if (!rotated[y][x]) continue;
 
+            int fx = game->currentX + x;
+            int fy = game->currentY + y;
+
+            if (fx < 0 || fx >= FIELD_WIDTH) return 0;
+            if (fy >= FIELD_HEIGHT) return 0;
+            if (fy >= 0 && game->field[fy][fx] == 1) return 0;
+        }
+    }
+    return 1;
+}
+
+void rotatePiece(GameStruct_t *game) {
+    int rotated[4][4] = {0};
+
+    for (int y = 0; y < 4; y++) {
+        for (int x = 0; x < 4; x++) {
+            rotated[x][3 - y] = game->currentPiece[y][x];
+        }
+    }
+
+    if (canRotate(game, rotated)) {
+        clear_piece_from_field(game);
+        memcpy(game->currentPiece, rotated, sizeof(rotated));
+        draw_piece_to_field(game);
+    }
+}
 
 void removeLine(GameStruct_t *game) {
     int lines_cleared = 0;

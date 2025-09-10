@@ -65,6 +65,7 @@ void autoMoveDown(GameStruct_t *game);
 void moveDown(GameStruct_t *game);
 void moveLeft(GameStruct_t *game);
 void moveRight(GameStruct_t *game);
+void rotatePiece(GameStruct_t *game);
 void removeLine(GameStruct_t *game);
 void attachPiece(GameStruct_t *game);
 void randomPiece(int dest[4][4]);
