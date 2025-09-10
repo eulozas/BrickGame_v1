@@ -140,13 +140,14 @@ void moveRight(GameStruct_t *game) {
     draw_piece_to_field(game);
 }
 
-int canRotate(GameStruct_t *game, int rotated[4][4]) {
+
+int canRotate(GameStruct_t *game, int rotated[4][4], int offsetX, int offsetY) {
     for (int y = 0; y < 4; y++) {
         for (int x = 0; x < 4; x++) {
             if (!rotated[y][x]) continue;
 
-            int fx = game->currentX + x;
-            int fy = game->currentY + y;
+            int fx = game->currentX + x + offsetX;
+            int fy = game->currentY + y + offsetY;
 
             if (fx < 0 || fx >= FIELD_WIDTH) return 0;
             if (fy >= FIELD_HEIGHT) return 0;
@@ -165,10 +166,28 @@ void rotatePiece(GameStruct_t *game) {
         }
     }
 
-    if (canRotate(game, rotated)) {
-        clear_piece_from_field(game);
-        memcpy(game->currentPiece, rotated, sizeof(rotated));
-        draw_piece_to_field(game);
+    // сдвиги
+    int kicks[][2] = {
+        {0, 0},   // как есть
+        {-1, 0},  // сдвиг влево
+        {1, 0},   // сдвиг вправо
+        {-2, 0},  // чуть дальше влево
+        {2, 0},   // чуть дальше вправо
+        {0, -1},  // иногда нужен сдвиг вверх
+    };
+
+    for (int i = 0; i < sizeof(kicks)/sizeof(kicks[0]); i++) {
+        int dx = kicks[i][0];
+        int dy = kicks[i][1];
+
+        if (canRotate(game, rotated, dx, dy)) {
+            clear_piece_from_field(game);
+            memcpy(game->currentPiece, rotated, sizeof(rotated));
+            game->currentX += dx;
+            game->currentY += dy;
+            draw_piece_to_field(game);
+            break;
+        }
     }
 }
 
