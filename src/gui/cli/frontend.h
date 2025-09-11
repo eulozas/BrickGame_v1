@@ -2,8 +2,8 @@
 #define FRONTEND_H
 
 #include <ncurses.h>
-#include "../../brick_game/tetris/tetris.h"
-
+#include <string.h>
+#include "../../brick_game/tetris/types.h"
 
 UserAction_t getUserAction();
 void printOverlay(const char *game_name);
