@@ -154,7 +154,7 @@ void rotatePiece(GameStruct_t *game) {
 
     int was_rotated = 0;
 
-    for (int i = 0; i < sizeof(kicks)/sizeof(kicks[0]) && !was_rotated; i++) {
+    for (unsigned int i = 0; i < sizeof(kicks)/sizeof(kicks[0]) && !was_rotated; i++) {
         int dx = kicks[i][0];
         int dy = kicks[i][1];
 

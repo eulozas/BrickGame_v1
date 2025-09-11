@@ -133,6 +133,7 @@ void on_file_error_state(UserAction_t action, GameStruct_t *game){
 
 void userInput(UserAction_t action, bool hold) {
     GameStruct_t *game = getGameStruct();
+    if(!hold){
     switch (game->state) {
         case START:
         on_start_state(action, game);
@@ -162,6 +163,7 @@ void userInput(UserAction_t action, bool hold) {
         on_file_error_state(action, game);
         break;
         default: break;
+    }
     }
 }
 

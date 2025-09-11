@@ -58,8 +58,9 @@ void printNextPiece(GameInfo_t *info) {
 }
 
 void printField(GameInfo_t *info){
-    for (int x = 0; x < FIELD_WIDTH * 2 + 2; x++)
+    for (int x = 0; x < FIELD_WIDTH * 2 + 2; x++){
         mvprintw(0, x, "#");
+    } 
 
     for (int y = 0; y < FIELD_HEIGHT; y++) {
         mvprintw(y + 1, 0, "#"); 
@@ -71,9 +72,9 @@ void printField(GameInfo_t *info){
         mvprintw(y + 1, FIELD_WIDTH * 2 + 1, "#"); 
     }
 
-    for (int x = 0; x < FIELD_WIDTH * 2 + 2; x++)
+    for (int x = 0; x < FIELD_WIDTH * 2 + 2; x++){
         mvprintw(FIELD_HEIGHT + 1, x, "#");
-
+    }
         printNextPiece(info);
 }
 

@@ -28,11 +28,12 @@ void init_ncurses() {
 void gameLoop() {
 
     bool break_flag = TRUE;
+    int hold = 0;
 
     while (break_flag) {
         UserAction_t action = getUserAction();
         //тут создается впервые статик структура игры и меняются состояния автомата и игровая структура
-        userInput(action, false);
+        userInput(action, hold);
         //тут создается впервые статик структура инфоигры, туда копируются некоторые поля в инфо структуру для отрисовки во фронте
         GameInfo_t snapshot = updateCurrentState(); 
         if (snapshot.field){ 

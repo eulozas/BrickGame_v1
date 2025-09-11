@@ -1,6 +1,58 @@
+# ===== Компилятор и флаги =====
 CC = gcc
-CFLAGS = -std=c11
+CFLAGS = -std=c11 -Wall -Wextra -Werror -pedantic
 LDFLAGS = -lncurses
+
+# # ===== Директории объектных файлов =====
+# BUILD_DIR = build
+# SRC_OBJ_DIR = $(BUILD_DIR)/src
+# CLI_OBJ_DIR = $(BUILD_DIR)/cli
+
+# # ===== Файлы библиотеки =====
+# SRC = $(wildcard brick_game/tetris/*.c)
+# OBJ = $(patsubst brick_game/tetris/%.c, $(SRC_OBJ_DIR)/%.o, $(SRC))
+# # Все заголовки игровой логики
+# HEADERS = $(wildcard brick_game/tetris/*.h)
+
+# SRC_UI := $(wildcard gui/cli*.c)
+# OBJ_UI = $(patsubst gui/cli/%.c,$(CLI_OBJ_DIR)/%.o,$(SRC_UI))
+
+# LIB_NAME = libtetris.a
+# EXE_NAME = tetris
+
+# # ===== Цель: all (полная сборка, запуск и отчёт покрытия) =====
+# all: $(EXE_NAME)
+
+# # ===== Исполняемый файл =====
+# $(EXE_NAME): libtetris.a $(OBJ_UI)
+# 	$(CC) -o $@ $(OBJ_UI) $(LIB_NAME) $(LDFLAGS)
+
+# # ===== Цель: сборка библиотеки без покрытия =====
+# libtetris.a: $(OBJ)
+# 	ar rcs $(LIB_NAME) $(OBJ)
+# 	ranlib $(LIB_NAME)
+
+
+
+# # ===== Создание папок =====
+# $(SRC_OBJ_DIR):
+# 	mkdir -p $(SRC_OBJ_DIR)
+
+# $(CLI_OBJ_DIR):
+# 	mkdir -p $(CLI_OBJ_DIR)
+
+# # ===== Компиляция объектных файлов библиотеки =====
+# $(SRC_OBJ_DIR)/%.o: brick_game/tetris/%.c $(HEADERS) | $(SRC_OBJ_DIR)
+# 	$(CC) $(CFLAGS) -c $< -o $@
+
+# # ===== Компиляция объектных файлов интерфейса =====
+# $(CLI_OBJ_DIR)/%.o: gui/cli/%.c gui/cli/frontend.h | $(CLI_OBJ_DIR)
+# 	$(CC) $(CFLAGS) -c $< -o $@
+
+# # ===== Очистка =====
+# clean:
+# 	rm -rf $(BUILD_DIR) $(EXE_NAME)
+
 
 all: tetris
 
