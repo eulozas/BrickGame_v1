@@ -52,29 +52,33 @@ GameInfo_t mallocGameInfo() {
     info.speed = 0;
     info.pause = 0;
 
+    int exit_code = 0;
+
     info.field = malloc(FIELD_HEIGHT * sizeof(int *));
     if (info.field) {
-        for (int i = 0; i < FIELD_HEIGHT; i++) {
+        for (int i = 0; i < FIELD_HEIGHT && !exit_code; i++) {
             info.field[i] = malloc(FIELD_WIDTH * sizeof(int));
             if (!info.field[i]) {
                 for (int j = 0; j < i; j++) free(info.field[j]);
                 free(info.field);
                 info.field = NULL;
-                break;
+                exit_code = 1;
             }
         }
+    }else{
+        exit_code = 1;
     }
 
-    if(info.field){
+    if(!exit_code){
         info.next = malloc(4 * sizeof(int *));
         if (info.next) {
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 4 && !exit_code; i++) {
                 info.next[i] = malloc(4 * sizeof(int));
                 if (!info.next[i]) {
                     for (int j = 0; j < i; j++) free(info.next[j]);
                     free(info.next);
                     info.next = NULL;
-                    break;
+                    exit_code = 1;
                 }
             }
         }else{

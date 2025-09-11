@@ -68,7 +68,7 @@ void on_moving_state(UserAction_t action, GameStruct_t *game){
     }  
 }
 
-void on_shifting_state(UserAction_t action, GameStruct_t *game) {
+void on_shifting_state(GameStruct_t *game) {
     if (canMoveDown(game)) {
         autoMoveDown(game);
         game->state = MOVING;
@@ -77,7 +77,7 @@ void on_shifting_state(UserAction_t action, GameStruct_t *game) {
     }
 }
 
-void on_attaching_state(UserAction_t action, GameStruct_t *game) {
+void on_attaching_state(GameStruct_t *game) {
     attachPiece(game);
     removeLine(game);
     game->last_fall_time = getCurrentTimeMs();
@@ -144,10 +144,10 @@ void userInput(UserAction_t action, bool hold) {
         on_moving_state(action, game);
         break;
         case SHIFTING:
-        on_shifting_state(action, game);
+        on_shifting_state(game);
         break;
         case ATTACHING:
-        on_attaching_state(action, game);
+        on_attaching_state(game);
         break;
         case PAUSE:
         on_pause_state(action, game);
@@ -163,7 +163,6 @@ void userInput(UserAction_t action, bool hold) {
         break;
         default: break;
     }
-    //+логика для hold
 }
 
 GameInfo_t updateCurrentState() {

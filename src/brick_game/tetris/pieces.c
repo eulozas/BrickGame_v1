@@ -6,10 +6,7 @@ void draw_piece_to_field(GameStruct_t *game) {
             if (game->currentPiece[y][x]) {
                 int fx = game->currentX + x;
                 int fy = game->currentY + y;
-                if (fy >= 0 && fy < FIELD_HEIGHT &&
-                    fx >= 0 && fx < FIELD_WIDTH) {
-                    game->field[fy][fx] = 2; //подумать, может без 2, еще поле(?)
-                }
+                if (fy >= 0 && fy < FIELD_HEIGHT && fx >= 0 && fx < FIELD_WIDTH) game->field[fy][fx] = 2;
             }
         }
     }
@@ -18,37 +15,32 @@ void draw_piece_to_field(GameStruct_t *game) {
 void clear_piece_from_field(GameStruct_t *game) {
     for (int y = 0; y < 4; y++) {
         for (int x = 0; x < 4; x++) {
-            if (!game->currentPiece[y][x]) continue;
-            int fx = game->currentX + x;
-            int fy = game->currentY + y;
-            if (fy >= 0 && fy < FIELD_HEIGHT && fx >= 0 && fx < FIELD_WIDTH) {
-                if (game->field[fy][fx] == 2) 
-                    game->field[fy][fx] = 0;
-            }
+            if (game->currentPiece[y][x]){
+                int fx = game->currentX + x;
+                int fy = game->currentY + y;
+                if (fy >= 0 && fy < FIELD_HEIGHT && fx >= 0 && fx < FIELD_WIDTH) {
+                    if (game->field[fy][fx] == 2) game->field[fy][fx] = 0;
+                }
+            }  
         }
     }
 }
 
 int canSpawnPiece(GameStruct_t *game) {
-    for (int y = 0; y < 4; y++) {
-        for (int x = 0; x < 4; x++) {
-            if (game->currentPiece[y][x]) continue; 
-
-            int fx = game->currentX + x;
-            int fy = game->currentY + y;
-            if (fx < 0 || fx >= FIELD_WIDTH) {
-                return 0;
-            }
-            if (fy >= FIELD_HEIGHT) {
-                return 0;
-            }
-            if (fy >= 0) {
-                if (game->field[fy][fx]) return 0;
+    int exit_code = 1;
+    for (int y = 0; y < 4 && exit_code != 0; y++) {
+        for (int x = 0; x < 4 && exit_code != 0; x++) {
+            if (game->currentPiece[y][x]){
+                int fx = game->currentX + x;
+                int fy = game->currentY + y;
+                if (fy >= 0) {
+                    if (game->field[fy][fx]) exit_code = 0;
+                }
             }
         }
     }
-    draw_piece_to_field(game);
-    return 1;
+    if(exit_code != 0) draw_piece_to_field(game);
+    return exit_code;
 }
 
 void spawnNewPiece(GameStruct_t *game){
@@ -59,18 +51,17 @@ void spawnNewPiece(GameStruct_t *game){
 }
 
 int canMoveDown(GameStruct_t *game) {
-    for (int y = 0; y < 4; y++) {
-        for (int x = 0; x < 4; x++) {
-            if (!game->currentPiece[y][x]) continue;
-
-            int fx = game->currentX + x;
-            int fy = game->currentY + y + 1;
-
-            if (fy >= FIELD_HEIGHT) return 0;
-            if (fy >= 0 && game->field[fy][fx] == 1) return 0; 
+    int exit_code = 1;
+    for (int y = 0; y < 4 && exit_code != 0; y++) {
+        for (int x = 0; x < 4 && exit_code != 0; x++) {
+            if (game->currentPiece[y][x]){
+                int fx = game->currentX + x;
+                int fy = game->currentY + y + 1;
+                if (fy >= FIELD_HEIGHT || (fy >= 0 && game->field[fy][fx] == 1)) exit_code = 0; 
+            } 
         }
     }
-    return 1;
+    return exit_code;
 }
 
 void autoMoveDown(GameStruct_t *game){
@@ -88,17 +79,17 @@ void moveDown(GameStruct_t *game) {
 }
 
 int canMoveLeft(GameStruct_t *game) {
-    for (int y = 0; y < 4; y++) {
-        for (int x = 0; x < 4; x++) {
-            if (!game->currentPiece[y][x]) continue;
-            int fx = game->currentX + x - 1;
-            int fy = game->currentY + y;
-
-            if (fx < 0) return 0;
-            if (fy >= 0 && game->field[fy][fx] == 1) return 0;
+    int exit_code = 1;
+    for (int y = 0; y < 4 && exit_code != 0; y++) {
+        for (int x = 0; x < 4 && exit_code != 0; x++) {
+            if (game->currentPiece[y][x]){
+                int fx = game->currentX + x - 1;
+                int fy = game->currentY + y;
+                if (fx < 0 || (fy >= 0 && game->field[fy][fx] == 1)) exit_code = 0;
+            }
         }
     }
-    return 1;
+    return exit_code;
 }
 
 void moveLeft(GameStruct_t *game) {
@@ -108,17 +99,17 @@ void moveLeft(GameStruct_t *game) {
 }
 
 int canMoveRight(GameStruct_t *game) {
-    for (int y = 0; y < 4; y++) {
-        for (int x = 0; x < 4; x++) {
-            if (!game->currentPiece[y][x]) continue;
-            int fx = game->currentX + x + 1;
-            int fy = game->currentY + y;
-
-            if (fx >= FIELD_WIDTH) return 0;
-            if (fy >= 0 && game->field[fy][fx] == 1) return 0;
+    int exit_code = 1;
+    for (int y = 0; y < 4 && exit_code != 0; y++) {
+        for (int x = 0; x < 4 && exit_code != 0; x++) {
+            if (game->currentPiece[y][x]){
+                int fx = game->currentX + x + 1;
+                int fy = game->currentY + y;
+                if (fx >= FIELD_WIDTH || (fy >= 0 && game->field[fy][fx] == 1)) exit_code = 0;
+            } 
         }
     }
-    return 1;
+    return exit_code;
 }
 
 void moveRight(GameStruct_t *game) {
@@ -129,19 +120,17 @@ void moveRight(GameStruct_t *game) {
 
 
 int canRotate(GameStruct_t *game, int rotated[4][4], int offsetX, int offsetY) {
-    for (int y = 0; y < 4; y++) {
-        for (int x = 0; x < 4; x++) {
-            if (!rotated[y][x]) continue;
-
-            int fx = game->currentX + x + offsetX;
-            int fy = game->currentY + y + offsetY;
-
-            if (fx < 0 || fx >= FIELD_WIDTH) return 0;
-            if (fy >= FIELD_HEIGHT) return 0;
-            if (fy >= 0 && game->field[fy][fx] == 1) return 0;
+    int exit_code = 1;
+    for (int y = 0; y < 4 && exit_code != 0; y++) {
+        for (int x = 0; x < 4 && exit_code != 0; x++) {
+            if (rotated[y][x]){
+                int fx = game->currentX + x + offsetX;
+                int fy = game->currentY + y + offsetY;
+                if (fx < 0 || fx >= FIELD_WIDTH || fy >= FIELD_HEIGHT || (fy >= 0 && game->field[fy][fx] == 1)) exit_code = 0;
+            } 
         }
     }
-    return 1;
+    return exit_code;
 }
 
 void rotatePiece(GameStruct_t *game) {
@@ -163,7 +152,9 @@ void rotatePiece(GameStruct_t *game) {
         {0, -1},  // иногда нужен сдвиг вверх
     };
 
-    for (int i = 0; i < sizeof(kicks)/sizeof(kicks[0]); i++) {
+    int was_rotated = 0;
+
+    for (int i = 0; i < sizeof(kicks)/sizeof(kicks[0]) && !was_rotated; i++) {
         int dx = kicks[i][0];
         int dy = kicks[i][1];
 
@@ -173,7 +164,7 @@ void rotatePiece(GameStruct_t *game) {
             game->currentX += dx;
             game->currentY += dy;
             draw_piece_to_field(game);
-            break;
+            was_rotated = 1;
         }
     }
 }
@@ -181,38 +172,31 @@ void rotatePiece(GameStruct_t *game) {
 void attachPiece(GameStruct_t *game) {
     for (int y = 0; y < 4; y++) {
         for (int x = 0; x < 4; x++) {
-            if (!game->currentPiece[y][x]) continue;
-            int fx = game->currentX + x;
-            int fy = game->currentY + y;
-            if (fy >= 0 && fy < FIELD_HEIGHT && fx >= 0 && fx < FIELD_WIDTH) {
-                game->field[fy][fx] = 1; 
-            }
+            if (game->currentPiece[y][x]){
+                int fx = game->currentX + x;
+                int fy = game->currentY + y;
+                if (fy >= 0 && fy < FIELD_HEIGHT && fx >= 0 && fx < FIELD_WIDTH) game->field[fy][fx] = 1; 
+            } 
         }
     }
 }
 
 void removeLine(GameStruct_t *game) {
-        int lines_cleared = 0;
+    int lines_cleared = 0;
 
     for (int y = 0; y < FIELD_HEIGHT; y++) {
         int full = 1;
-        for (int x = 0; x < FIELD_WIDTH; x++) {
+        for (int x = 0; x < FIELD_WIDTH && full != 0; x++) {
             if (game->field[y][x] == 0) {
                 full = 0;
-                break;
             }
         }
 
         if (full) {
             for (int ty = y; ty > 0; ty--) {
-                for (int x = 0; x < FIELD_WIDTH; x++) {
-                    game->field[ty][x] = game->field[ty-1][x];
-                }
+                for (int x = 0; x < FIELD_WIDTH; x++) game->field[ty][x] = game->field[ty-1][x];
             }
-            for (int x = 0; x < FIELD_WIDTH; x++) {
-                game->field[0][x] = 0;
-            }
-
+            for (int x = 0; x < FIELD_WIDTH; x++) game->field[0][x] = 0;
             lines_cleared++;
             y--; 
         }
