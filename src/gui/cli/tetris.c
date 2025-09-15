@@ -1,10 +1,12 @@
+#include <stdbool.h>
 #include "../../brick_game/tetris/fsm.h"
 #include "frontend.h"
 
+
 void gameLoop() {
 
-    bool break_flag = TRUE;
-    bool hold = FALSE;
+    bool break_flag = true;
+    bool hold = false;
 
     while (break_flag) {
         UserAction_t action = getUserAction();
@@ -15,34 +17,26 @@ void gameLoop() {
         if (snapshot.field){ 
             drawGameInfo(&snapshot);
         }else{
-            break_flag = FALSE;
+            break_flag = false;
         }
-        napms(20);
+        delay_ncurses(20);
     }
-}
-
-void init_ncurses() {
-    initscr();            // инициализация ncurses
-    noecho();             // не выводить нажатые символы
-    cbreak();             // не ждать enter при вводе
-    curs_set(FALSE); // не видеть курсор
-    keypad(stdscr, TRUE); // стрелки
 }
 
 int main() {  
     init_ncurses();
     printOverlay("TETRIS"); 
     UserAction_t action;  
-    nodelay(stdscr, FALSE);// getch ждёт 
+    block_input_ncurses();// getch ждёт 
     do {
         action = getUserAction();
     } while (action != Start && action != Terminate);
 
     if (action == Start) {
-        nodelay(stdscr, TRUE);// getch не ждёт 
+        noblock_input_ncurses();// getch не ждёт 
         gameLoop();
     }
-    endwin();
+    end_ncurses();
     return 0;
 }
 

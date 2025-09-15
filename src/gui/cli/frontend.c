@@ -1,4 +1,30 @@
 #include "frontend.h"
+#include <ncurses.h>
+#include <string.h>
+
+void init_ncurses() {
+    initscr();            // инициализация ncurses
+    noecho();             // не выводить нажатые символы
+    cbreak();             // не ждать enter при вводе
+    curs_set(FALSE); // не видеть курсор
+    keypad(stdscr, TRUE); // стрелки
+}
+
+void end_ncurses() {
+    endwin();
+}
+
+void block_input_ncurses() {
+    nodelay(stdscr, FALSE);
+}
+
+void noblock_input_ncurses() {
+    nodelay(stdscr, TRUE);
+}
+
+void delay_ncurses(int ms) {
+    napms(ms);
+}
 
 UserAction_t getUserAction() {
     UserAction_t action = ERR;

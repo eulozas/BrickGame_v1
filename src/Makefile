@@ -1,34 +1,57 @@
 # ===== Компилятор и флаги =====
-CC = gcc
-CFLAGS = -std=c11 -Wall -Wextra -Werror -pedantic
-LDFLAGS = -lncurses
+CC       = gcc
+CFLAGS   = -std=c11 -Wall -Wextra -Werror -pedantic
+LDFLAGS  = -lncurses
 
-# ===== Директории объектных файлов =====
-BUILD_DIR = build
-SRC_OBJ_DIR = $(BUILD_DIR)/src
-CLI_OBJ_DIR = $(BUILD_DIR)/cli
+# ===== Директории =====
+BUILD_DIR    = build
+SRC_OBJ_DIR  = $(BUILD_DIR)/src
+CLI_OBJ_DIR  = $(BUILD_DIR)/cli
 
-# ===== Файлы библиотеки =====
-SRC = $(wildcard brick_game/tetris/*.c)
-OBJ = $(patsubst brick_game/tetris/%.c, $(SRC_OBJ_DIR)/%.o, $(SRC))
-HEADERS = $(wildcard brick_game/tetris/*.h)
+# ===== Исходники и заголовки =====
+SRC       = $(wildcard brick_game/tetris/*.c)
+SRC_UI    = $(wildcard gui/cli/*.c)
 
-# ===== Файлы интерфейса =====
-SRC_UI = $(wildcard gui/cli/*.c)
-OBJ_UI = $(patsubst gui/cli/%.c,$(CLI_OBJ_DIR)/%.o,$(SRC_UI))
+OBJ       = $(patsubst brick_game/tetris/%.c,$(SRC_OBJ_DIR)/%.o,$(SRC))
+OBJ_UI    = $(patsubst gui/cli/%.c,$(CLI_OBJ_DIR)/%.o,$(SRC_UI))
+
+HEADERS   = $(wildcard brick_game/tetris/*.h) gui/cli/frontend.h
 
 # ===== Имена артефактов =====
-LIB_NAME = libtetris.a
-EXE_NAME = tetris
+LIB_NAME  = libtetris.a
+EXE_NAME  = tetris
 
 # ===== Пути установки =====
-PREFIX ?= /usr/local
+PREFIX    ?= /usr/local
 
-# ===== Установка ===== PREFIX=/home/user/mytetris
-install: $(EXE_NAME) libtetris.a
-	mkdir -p $(PREFIX)/bin
-	mkdir -p $(PREFIX)/lib
-	mkdir -p $(PREFIX)/include/tetris
+# ===== Цель по умолчанию =====
+all: $(LIB_NAME) $(EXE_NAME)
+
+# ===== Сборка библиотеки =====
+$(LIB_NAME): $(OBJ)
+	ar rcs $@ $^
+
+# ===== Сборка исполняемого файла =====
+$(EXE_NAME): $(LIB_NAME) $(OBJ_UI)
+	$(CC) -o $@ $(OBJ_UI) $(LIB_NAME) $(LDFLAGS)
+
+# ===== Компиляция объектников =====
+$(SRC_OBJ_DIR)/%.o: brick_game/tetris/%.c $(HEADERS) | $(SRC_OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(CLI_OBJ_DIR)/%.o: gui/cli/%.c $(HEADERS) | $(CLI_OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# ===== Создание папок =====
+$(SRC_OBJ_DIR):
+	mkdir -p $@
+
+$(CLI_OBJ_DIR):
+	mkdir -p $@
+
+# ===== Установка ===== make install PREFIX=/home/user/mytetris
+install: $(EXE_NAME) $(LIB_NAME)
+	mkdir -p $(PREFIX)/bin $(PREFIX)/lib $(PREFIX)/include/tetris
 	cp $(EXE_NAME) $(PREFIX)/bin/
 	cp $(LIB_NAME) $(PREFIX)/lib/
 	cp brick_game/tetris/*.h $(PREFIX)/include/tetris/
@@ -38,41 +61,16 @@ uninstall:
 	rm -f $(PREFIX)/bin/$(EXE_NAME)
 	rm -f $(PREFIX)/lib/$(LIB_NAME)
 	rm -rf $(PREFIX)/include/tetris
-	-rmdir $(PREFIX)/include 2>/dev/null || true
-	-rmdir $(PREFIX)/lib 2>/dev/null || true
 	-rmdir $(PREFIX)/bin 2>/dev/null || true
+	-rmdir $(PREFIX)/lib 2>/dev/null || true
+	-rmdir $(PREFIX)/include 2>/dev/null || true
 	rm -rf $(PREFIX)
-
-# ===== Цель по умолчанию =====
-all: $(EXE_NAME)
-
-# ===== Исполняемый файл =====
-$(EXE_NAME): $(LIB_NAME) $(OBJ_UI)
-	$(CC) -o $@ $(OBJ_UI) $(LIB_NAME) $(LDFLAGS)
-
-# ===== Библиотека =====
-$(LIB_NAME): $(OBJ)
-	ar rcs $@ $^
-
-# ===== Создание папок =====
-$(SRC_OBJ_DIR):
-	mkdir -p $@
-
-$(CLI_OBJ_DIR):
-	mkdir -p $@
-
-# ===== Компиляция объектных файлов библиотеки =====
-$(SRC_OBJ_DIR)/%.o: brick_game/tetris/%.c $(HEADERS) | $(SRC_OBJ_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-# ===== Компиляция объектных файлов интерфейса =====
-$(CLI_OBJ_DIR)/%.o: gui/cli/%.c gui/cli/frontend.h | $(CLI_OBJ_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
 
 # ===== Очистка =====
 clean:
 	rm -rf $(BUILD_DIR) $(EXE_NAME) $(LIB_NAME)
 
+.PHONY: all clean install uninstall
 
 # all: tetris
 
