@@ -2,11 +2,25 @@
 CC       = gcc
 CFLAGS   = -std=c11 -Wall -Wextra -Werror -pedantic
 LDFLAGS  = -lncurses
+GCOV_FLAGS = -fprofile-arcs -ftest-coverage
+CHECK_LIBS = -lcheck -lm -lsubunit
 
 # ===== Директории =====
 BUILD_DIR    = build
 SRC_OBJ_DIR  = $(BUILD_DIR)/src
 CLI_OBJ_DIR  = $(BUILD_DIR)/cli
+TEST_OBJ_DIR = $(BUILD_DIR)/tests
+
+# ===== Файлы и папки отчетности =====
+COV_DIR = coverage
+COV_INFO = coverage.info
+COV_FILTERED = coverage_filtered.info
+
+# ===== Включение флагов покрытия при необходимости =====
+GCOV ?= 0
+ifeq ($(GCOV), 1)
+    CFLAGS += $(GCOV_FLAGS)
+endif
 
 # ===== Исходники и заголовки =====
 SRC       = $(wildcard brick_game/tetris/*.c)
@@ -24,8 +38,17 @@ EXE_NAME  = tetris
 # ===== Пути установки =====
 PREFIX    ?= /usr/local
 
+# ===== Тестовые файлы =====
+TEST_DIR = tests
+TEST_SRC = $(wildcard $(TEST_DIR)/*.c)
+TEST_OBJ = $(patsubst $(TEST_DIR)/%.c, $(TEST_OBJ_DIR)/%.o, $(TEST_SRC))
+TEST_BIN = test_app
+
 # ===== Цель по умолчанию =====
 all: $(LIB_NAME) $(EXE_NAME)
+
+# ===== Цель: полная пересборка без покрытия =====
+re: clean $(LIB_NAME) test_build
 
 # ===== Сборка библиотеки =====
 $(LIB_NAME): $(OBJ)
@@ -35,6 +58,30 @@ $(LIB_NAME): $(OBJ)
 $(EXE_NAME): $(LIB_NAME) $(OBJ_UI)
 	$(CC) -o $@ $(OBJ_UI) $(LIB_NAME) $(LDFLAGS)
 
+# ===== Цель: сборка тестового приложения без покрытия =====
+test_build: $(TEST_BIN)
+
+# ===== Цель: запуск тестов (предполагается, что собраны) =====
+test: test_build
+	./$(TEST_BIN)
+
+# ===== Цель: сборка с покрытием (пересборка библиотеки и тестов с флагами покрытия) =====
+coverage_build:
+	$(MAKE) clean
+	$(MAKE) GCOV=1 $(LIB_NAME)
+	$(MAKE) GCOV=1 test_build
+
+# ===== Цель: генерация отчёта покрытия, зависит от сборки с покрытием и запуска тестов =====
+gcov_report: re coverage_build
+	./$(TEST_BIN)
+	lcov --capture --directory . --output-file $(COV_INFO) --rc branch_coverage=1
+	lcov --remove $(COV_INFO) '*/$(TEST_DIR)/*' --output-file $(COV_FILTERED) --rc branch_coverage=1
+	genhtml $(COV_FILTERED) --output-directory $(COV_DIR) --rc branch_coverage=1
+
+# ===== Сборка тестового приложения =====
+$(TEST_BIN): $(TEST_OBJ) $(LIB_NAME)
+	$(CC) $(CFLAGS) -I. $(TEST_OBJ) $(LIB_NAME) -o $(TEST_BIN) $(CHECK_LIBS)
+
 # ===== Компиляция объектников =====
 $(SRC_OBJ_DIR)/%.o: brick_game/tetris/%.c $(HEADERS) | $(SRC_OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -42,11 +89,17 @@ $(SRC_OBJ_DIR)/%.o: brick_game/tetris/%.c $(HEADERS) | $(SRC_OBJ_DIR)
 $(CLI_OBJ_DIR)/%.o: gui/cli/%.c $(HEADERS) | $(CLI_OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+$(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.c $(HEADERS) $(TEST_DIR)/fsm_tests.h | $(TEST_OBJ_DIR)
+	$(CC) $(CFLAGS) -I. -I$(TEST_DIR) -c $< -o $@
+
 # ===== Создание папок =====
 $(SRC_OBJ_DIR):
 	mkdir -p $@
 
 $(CLI_OBJ_DIR):
+	mkdir -p $@
+
+$(TEST_OBJ_DIR):
 	mkdir -p $@
 
 # ===== Установка ===== make install PREFIX=/home/user/mytetris
@@ -69,38 +122,7 @@ uninstall:
 # ===== Очистка =====
 clean:
 	rm -rf $(BUILD_DIR) $(EXE_NAME) $(LIB_NAME)
+	rm -f *.info $(TEST_BIN) $(LIB_NAME)
+	rm -rf coverage
 
 .PHONY: all clean install uninstall
-
-# all: tetris
-
-# tetris: tetris.o backend.o frontend.o fsm.o helpers.o pieces.o
-# 	$(CC) -o $@ $^ $(LDFLAGS)
-
-# # компиляция tetris.o
-# tetris.o: brick_game/tetris/tetris.c brick_game/tetris/backend.h brick_game/tetris/fsm.h brick_game/tetris/helpers.h brick_game/tetris/pieces.h
-# 	$(CC) $(CFLAGS) -c brick_game/tetris/tetris.c -o tetris.o
-
-# # компиляция backend.o
-# backend.o: brick_game/tetris/backend.c brick_game/tetris/backend.h brick_game/tetris/fsm.h brick_game/tetris/helpers.h
-# 	$(CC) $(CFLAGS) -c brick_game/tetris/backend.c -o backend.o 
-
-# # компиляция frontend.o
-# frontend.o: gui/cli/frontend.c brick_game/tetris/backend.h gui/cli/frontend.h brick_game/tetris/fsm.h
-# 	$(CC) $(CFLAGS) -c gui/cli/frontend.c -o frontend.o
-
-# # компиляция fsm.o
-# fsm.o: brick_game/tetris/fsm.c brick_game/tetris/fsm.h
-# 	$(CC) $(CFLAGS) -c brick_game/tetris/fsm.c -o fsm.o
-
-# # компиляция pieces.o
-# pieces.o: brick_game/tetris/pieces.c brick_game/tetris/pieces.h brick_game/tetris/backend.h brick_game/tetris/helpers.h
-# 	$(CC) $(CFLAGS) -c brick_game/tetris/pieces.c -o pieces.o
-
-# # компиляция helpers.o
-# helpers.o: brick_game/tetris/helpers.c brick_game/tetris/helpers.h
-# 	$(CC) $(CFLAGS) -c brick_game/tetris/helpers.c -o helpers.o
-
-# # очистка
-# clean:
-# 	rm -f *.o tetris
