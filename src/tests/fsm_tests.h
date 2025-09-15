@@ -15,4 +15,10 @@ void on_gameover_state(UserAction_t action, GameStruct_t *game);
 void on_exit_state(GameStruct_t *game);
 void on_file_error_state(UserAction_t action, GameStruct_t *game);
 
+void draw_piece_to_field(GameStruct_t *game);
+void clear_piece_from_field(GameStruct_t *game);
+int canMoveRight(GameStruct_t *game);
+int canMoveLeft(GameStruct_t *game);
+int canRotate(GameStruct_t *game, int rotated[4][4], int offsetX, int offsetY);
+
 #endif
