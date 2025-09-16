@@ -3,7 +3,17 @@ CC       = gcc
 CFLAGS   = -std=c11 -Wall -Wextra -Werror -pedantic
 LDFLAGS  = -lncurses
 GCOV_FLAGS = -fprofile-arcs -ftest-coverage
-CHECK_LIBS = -lcheck -lm -lsubunit
+
+# ===== ОС и нужные флаги для Check =====
+UNAME_S := $(shell uname -s)
+
+ifeq ($(UNAME_S),Linux)
+    CHECK_LIBS = -lcheck -lm -lsubunit
+endif
+
+ifeq ($(UNAME_S),Darwin)
+    CHECK_LIBS = -lcheck -lm
+endif 
 
 # ===== Директории =====
 BUILD_DIR    = build
@@ -37,6 +47,9 @@ EXE_NAME  = tetris
 
 # ===== Пути установки =====
 PREFIX    ?= /usr/local
+BINDIR ?= $(PREFIX)/bin
+LIBDIR ?= $(PREFIX)/lib
+INCLUDEDIR ?= $(PREFIX)/include/tetris
 
 # ===== Тестовые файлы =====
 TEST_DIR = tests
@@ -45,7 +58,7 @@ TEST_OBJ = $(patsubst $(TEST_DIR)/%.c, $(TEST_OBJ_DIR)/%.o, $(TEST_SRC))
 TEST_BIN = test_app
 
 # ===== Цель по умолчанию =====
-all: $(LIB_NAME) $(EXE_NAME)
+all: clean $(LIB_NAME) $(EXE_NAME)
 
 # ===== Цель: полная пересборка без покрытия =====
 re: clean $(LIB_NAME) test_build
@@ -104,20 +117,43 @@ $(TEST_OBJ_DIR):
 
 # ===== Установка ===== make install PREFIX=/home/user/mytetris
 install: $(EXE_NAME) $(LIB_NAME)
-	mkdir -p $(PREFIX)/bin $(PREFIX)/lib $(PREFIX)/include/tetris
-	cp $(EXE_NAME) $(PREFIX)/bin/
-	cp $(LIB_NAME) $(PREFIX)/lib/
-	cp brick_game/tetris/*.h $(PREFIX)/include/tetris/
+	install -d $(BINDIR) $(LIBDIR) $(INCLUDEDIR)
+	install -m 755 $(EXE_NAME) $(BINDIR)/
+	install -m 644 $(LIB_NAME) $(LIBDIR)/
+	install -m 644 brick_game/tetris/*.h $(INCLUDEDIR)/
 
 # ===== Удаление установленного =====
 uninstall:
-	rm -f $(PREFIX)/bin/$(EXE_NAME)
-	rm -f $(PREFIX)/lib/$(LIB_NAME)
-	rm -rf $(PREFIX)/include/tetris
-	-rmdir $(PREFIX)/bin 2>/dev/null || true
-	-rmdir $(PREFIX)/lib 2>/dev/null || true
+	rm -f $(BINDIR)/$(EXE_NAME)
+	rm -f $(LIBDIR)/$(LIB_NAME)
+	rm -rf $(INCLUDEDIR)
+	-rmdir $(BINDIR) 2>/dev/null || true
+	-rmdir $(LIBDIR) 2>/dev/null || true
 	-rmdir $(PREFIX)/include 2>/dev/null || true
-	rm -rf $(PREFIX)
+	-rmdir $(PREFIX) 2>/dev/null || true
+
+# ===== Создание дистрибутива =====
+PACKAGE_NAME = tetris
+VERSION      = 1.0
+DIST_DIR     = $(PACKAGE_NAME)-$(VERSION)
+DIST_ARCHIVE = $(DIST_DIR).tar.gz
+
+# ===== Создание дистрибутива =====
+dist: clean
+	@mkdir -p $(DIST_DIR)
+	@cp -r brick_game $(DIST_DIR)/
+	@cp -r gui $(DIST_DIR)/
+	@cp -r tests $(DIST_DIR)/
+	@cp Makefile $(DIST_DIR)/
+	@tar -czf $(DIST_ARCHIVE) $(DIST_DIR)
+	@rm -rf $(DIST_DIR)
+	@echo "Distribution created: $(DIST_ARCHIVE)"
+
+
+
+# ===== Цель: проверка на утечки памяти с помощью valgrind =====
+valgrind: test_build
+	CK_FORK=no valgrind --tool=memcheck --leak-check=yes ./$(TEST_BIN)
 
 # ===== Очистка =====
 clean:
@@ -125,4 +161,4 @@ clean:
 	rm -f *.info $(TEST_BIN) $(LIB_NAME)
 	rm -rf coverage
 
-.PHONY: all clean install uninstall
+.PHONY: all re test_build test coverage_build gcov_report clean install uninstall dist
