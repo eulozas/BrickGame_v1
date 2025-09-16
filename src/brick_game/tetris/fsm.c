@@ -79,7 +79,7 @@ void on_shifting_state(GameStruct_t *game) {
 
 void on_attaching_state(GameStruct_t *game) {
     attachPiece(game);
-    removeLine(game);
+    processCompletedLines(game);
     game->last_fall_time = getCurrentTimeMs();
     game->state = SPAWN;
 }

@@ -76,7 +76,7 @@ gcov_report: re coverage_build
 	./$(TEST_BIN)
 	lcov --capture --directory . --output-file $(COV_INFO) --rc branch_coverage=1
 	lcov --remove $(COV_INFO) '*/$(TEST_DIR)/*' --output-file $(COV_FILTERED) --rc branch_coverage=1
-	genhtml $(COV_FILTERED) --output-directory $(COV_DIR) --rc branch_coverage=1
+	genhtml $(COV_FILTERED) --output-directory $(COV_DIR) --rc branch_coverage=0
 
 # ===== Сборка тестового приложения =====
 $(TEST_BIN): $(TEST_OBJ) $(LIB_NAME)
@@ -89,7 +89,7 @@ $(SRC_OBJ_DIR)/%.o: brick_game/tetris/%.c $(HEADERS) | $(SRC_OBJ_DIR)
 $(CLI_OBJ_DIR)/%.o: gui/cli/%.c $(HEADERS) | $(CLI_OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.c $(HEADERS) $(TEST_DIR)/fsm_tests.h | $(TEST_OBJ_DIR)
+$(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.c $(HEADERS) $(TEST_DIR)/test_header.h | $(TEST_OBJ_DIR)
 	$(CC) $(CFLAGS) -I. -I$(TEST_DIR) -c $< -o $@
 
 # ===== Создание папок =====

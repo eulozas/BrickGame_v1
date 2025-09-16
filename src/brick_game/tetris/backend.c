@@ -1,7 +1,7 @@
 #include "backend.h"
 #include "pieces.h"
 
-static void initGameStruct(GameStruct_t *game){
+void initGameStruct(GameStruct_t *game){
     memset(game, 0, sizeof(GameStruct_t));
     game->score = 0;
     game->level = 0;

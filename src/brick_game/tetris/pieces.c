@@ -181,27 +181,29 @@ void attachPiece(GameStruct_t *game) {
     }
 }
 
-void removeLine(GameStruct_t *game) {
+int clearLines(GameStruct_t *game) {
     int lines_cleared = 0;
 
     for (int y = 0; y < FIELD_HEIGHT; y++) {
         int full = 1;
-        for (int x = 0; x < FIELD_WIDTH && full != 0; x++) {
-            if (game->field[y][x] == 0) {
-                full = 0;
-            }
+        for (int x = 0; x < FIELD_WIDTH && full; x++) {
+            if (game->field[y][x] == 0) full = 0;
         }
-
         if (full) {
             for (int ty = y; ty > 0; ty--) {
-                for (int x = 0; x < FIELD_WIDTH; x++) game->field[ty][x] = game->field[ty-1][x];
+                for (int x = 0; x < FIELD_WIDTH; x++)
+                    game->field[ty][x] = game->field[ty-1][x];
             }
             for (int x = 0; x < FIELD_WIDTH; x++) game->field[0][x] = 0;
+
             lines_cleared++;
-            y--; 
+            y--;
         }
     }
+    return lines_cleared;
+}
 
+void updateScore(GameStruct_t *game, int lines_cleared) {
     switch (lines_cleared) {
         case 1: game->score += 100; break;
         case 2: game->score += 300; break;
@@ -209,7 +211,9 @@ void removeLine(GameStruct_t *game) {
         case 4: game->score += 1500; break;
         default: break;
     }
+}
 
+void updateLevel(GameStruct_t *game) {
     int new_level = (game->score / 600) + 1;
     if (new_level > game->level) {
         game->level = new_level > 10 ? 10 : new_level;
@@ -217,10 +221,21 @@ void removeLine(GameStruct_t *game) {
         if (game->fall_delay < 100) game->fall_delay = 100;
     }
     game->speed = game->level;
+}
 
+void updateHighScore(GameStruct_t *game) {
     if (game->score > game->high_score) {
         game->high_score = game->score;
-        saveHighScore(game->high_score); 
+        saveHighScore(game->high_score);
+    }
+}
+
+void processCompletedLines(GameStruct_t *game) {
+    int lines_cleared = clearLines(game);
+    if (lines_cleared > 0) {
+        updateScore(game, lines_cleared);
+        updateLevel(game);
+        updateHighScore(game);
     }
 }
 

@@ -1,16 +1,13 @@
 #include <check.h>
+#include "test_header.h"
 #include "../brick_game/tetris/fsm.h"
-#include "fsm_tests.h"
 #include "../brick_game/tetris/backend.h"
 #include "../brick_game/tetris/pieces.h"
 
 START_TEST(fsm_start1) {
-    
     GameStruct_t game;
     restartGameStruct(&game);
-
     on_start_state(Start, &game);
-
     ck_assert_int_eq(game.level, 1);
     ck_assert_int_eq(game.speed, 1);
     ck_assert(game.state == SPAWN);
@@ -18,12 +15,9 @@ START_TEST(fsm_start1) {
 END_TEST
 
 START_TEST(fsm_start2) {
-    
     GameStruct_t game;
     restartGameStruct(&game);
-
     on_start_state(Terminate, &game);
-
     ck_assert_int_eq(game.level, 0);
     ck_assert_int_eq(game.speed, 0);
     ck_assert(game.state == EXIT_STATE);
@@ -31,12 +25,9 @@ START_TEST(fsm_start2) {
 END_TEST
 
 START_TEST(fsm_start3) {
-    
     GameStruct_t game;
     restartGameStruct(&game);
-
     on_start_state(Pause, &game);
-
     ck_assert_int_eq(game.level, 0);
     ck_assert_int_eq(game.speed, 0);
     ck_assert(game.state == START);
@@ -419,6 +410,20 @@ START_TEST(fsm_upd_current_state2) {
 }
 END_TEST
 
+START_TEST(backend_copy_free_null) {
+    GameStruct_t *game = getGameStruct();
+    restartGameStruct(game);
+    GameInfo_t snapshot = updateCurrentState(); 
+    ck_assert_int_eq(game->state, START);
+    game->running = 0;
+    snapshot = updateCurrentState(); 
+    copyGameInfo(game, &snapshot);
+    freeGameInfo(&snapshot);
+    freeGameInfo(NULL);
+    ck_assert_ptr_null(snapshot.field);
+}
+END_TEST
+
 Suite *fsm_suite() {
   Suite *s = suite_create("fsm_suite");
   TCase *tc = tcase_create("Core");
@@ -464,6 +469,7 @@ Suite *fsm_suite() {
   tcase_add_test(tc, fsm_user_input11);
   tcase_add_test(tc, fsm_upd_current_state1);
   tcase_add_test(tc, fsm_upd_current_state2);
+  tcase_add_test(tc, backend_copy_free_null);
 
   suite_add_tcase(s, tc);
   return s;

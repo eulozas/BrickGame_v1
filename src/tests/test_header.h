@@ -1,5 +1,5 @@
-#ifndef FSM_TESTS_H
-#define FSM_TESTS_H
+#ifndef TEST_HEADER_H
+#define TEST_HEADER_H
 
 #include "../brick_game/tetris/backend.h"
 #include "../brick_game/tetris/types.h"
@@ -20,5 +20,9 @@ void clear_piece_from_field(GameStruct_t *game);
 int canMoveRight(GameStruct_t *game);
 int canMoveLeft(GameStruct_t *game);
 int canRotate(GameStruct_t *game, int rotated[4][4], int offsetX, int offsetY);
+int clearLines(GameStruct_t *game);
+void updateScore(GameStruct_t *game, int lines_cleared);
+void updateLevel(GameStruct_t *game);
+void updateHighScore(GameStruct_t *game);
 
 #endif
