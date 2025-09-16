@@ -68,7 +68,7 @@ START_TEST(fsm_spawn2) {
     GameStruct_t game;
     restartGameStruct(&game);
     game.state = SPAWN;
-    game.currentPiece[3][3] = 1;
+    memcpy(game.next, tetrominos[2], sizeof(game.next));
     game.field[0][4] = 1;
     game.field[0][5] = 1;
     game.field[0][6] = 1;
@@ -399,6 +399,26 @@ START_TEST(fsm_user_input11) {
 }
 END_TEST
 
+START_TEST(fsm_upd_current_state1) {
+    GameStruct_t *game = getGameStruct();
+    restartGameStruct(game);
+    GameInfo_t snapshot = updateCurrentState(); 
+    ck_assert_int_eq(game->state, START);
+    freeGameInfo(&snapshot);
+}
+END_TEST
+
+START_TEST(fsm_upd_current_state2) {
+    GameStruct_t *game = getGameStruct();
+    restartGameStruct(game);
+    GameInfo_t snapshot = updateCurrentState(); 
+    ck_assert_int_eq(game->state, START);
+    game->running = 0;
+    snapshot = updateCurrentState(); 
+    ck_assert_ptr_null(snapshot.field);
+}
+END_TEST
+
 Suite *fsm_suite() {
   Suite *s = suite_create("fsm_suite");
   TCase *tc = tcase_create("Core");
@@ -442,6 +462,8 @@ Suite *fsm_suite() {
   tcase_add_test(tc, fsm_user_input9);
   tcase_add_test(tc, fsm_user_input10);
   tcase_add_test(tc, fsm_user_input11);
+  tcase_add_test(tc, fsm_upd_current_state1);
+  tcase_add_test(tc, fsm_upd_current_state2);
 
   suite_add_tcase(s, tc);
   return s;
