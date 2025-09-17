@@ -393,27 +393,25 @@ END_TEST
 START_TEST(fsm_upd_current_state1) {
     GameStruct_t *game = getGameStruct();
     restartGameStruct(game);
-    GameInfo_t snapshot = updateCurrentState(); 
-    ck_assert_int_eq(game->state, START);
-    freeGameInfo(&snapshot);
-}
-END_TEST
-
-START_TEST(fsm_upd_current_state2) {
-    GameStruct_t *game = getGameStruct();
-    restartGameStruct(game);
-    GameInfo_t snapshot = updateCurrentState(); 
+    GameInfo_t snapshot;
+    snapshot = updateCurrentState(); 
+    ck_assert_ptr_nonnull(snapshot.field);
+    ck_assert_ptr_nonnull(snapshot.next);
     ck_assert_int_eq(game->state, START);
     game->running = 0;
     snapshot = updateCurrentState(); 
     ck_assert_ptr_null(snapshot.field);
+    ck_assert_ptr_null(snapshot.next);
 }
 END_TEST
 
 START_TEST(backend_copy_free_null) {
     GameStruct_t *game = getGameStruct();
     restartGameStruct(game);
-    GameInfo_t snapshot = updateCurrentState(); 
+    GameInfo_t snapshot;
+    snapshot = updateCurrentState(); 
+    ck_assert_ptr_nonnull(snapshot.field);
+    ck_assert_ptr_nonnull(snapshot.next);
     ck_assert_int_eq(game->state, START);
     game->running = 0;
     snapshot = updateCurrentState(); 
@@ -468,7 +466,6 @@ Suite *fsm_suite() {
   tcase_add_test(tc, fsm_user_input10);
   tcase_add_test(tc, fsm_user_input11);
   tcase_add_test(tc, fsm_upd_current_state1);
-  tcase_add_test(tc, fsm_upd_current_state2);
   tcase_add_test(tc, backend_copy_free_null);
 
   suite_add_tcase(s, tc);

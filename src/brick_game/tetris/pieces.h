@@ -60,7 +60,7 @@ static const int tetrominos[NUM_TETROMINOS][4][4] = {
 
 int canSpawnPiece(GameStruct_t *game);
 void spawnNewPiece(GameStruct_t *game);
-int canMoveDown(GameStruct_t *game);
+int canMoveDown(const GameStruct_t *game);
 void autoMoveDown(GameStruct_t *game);
 void moveDown(GameStruct_t *game);
 void moveLeft(GameStruct_t *game);

@@ -50,7 +50,7 @@ void spawnNewPiece(GameStruct_t *game){
     randomPiece(game->next);
 }
 
-int canMoveDown(GameStruct_t *game) {
+int canMoveDown(const GameStruct_t *game) {
     int exit_code = 1;
     for (int y = 0; y < 4 && exit_code != 0; y++) {
         for (int x = 0; x < 4 && exit_code != 0; x++) {
@@ -78,7 +78,7 @@ void moveDown(GameStruct_t *game) {
     draw_piece_to_field(game);
 }
 
-int canMoveLeft(GameStruct_t *game) {
+int canMoveLeft(const GameStruct_t *game) {
     int exit_code = 1;
     for (int y = 0; y < 4 && exit_code != 0; y++) {
         for (int x = 0; x < 4 && exit_code != 0; x++) {
@@ -98,7 +98,7 @@ void moveLeft(GameStruct_t *game) {
     draw_piece_to_field(game);
 }
 
-int canMoveRight(GameStruct_t *game) {
+int canMoveRight(const GameStruct_t *game) {
     int exit_code = 1;
     for (int y = 0; y < 4 && exit_code != 0; y++) {
         for (int x = 0; x < 4 && exit_code != 0; x++) {
@@ -118,8 +118,7 @@ void moveRight(GameStruct_t *game) {
     draw_piece_to_field(game);
 }
 
-
-int canRotate(GameStruct_t *game, int rotated[4][4], int offsetX, int offsetY) {
+int canRotate(const GameStruct_t *game, const int rotated[4][4], int offsetX, int offsetY) {
     int exit_code = 1;
     for (int y = 0; y < 4 && exit_code != 0; y++) {
         for (int x = 0; x < 4 && exit_code != 0; x++) {
@@ -158,7 +157,7 @@ void rotatePiece(GameStruct_t *game) {
         int dx = kicks[i][0];
         int dy = kicks[i][1];
 
-        if (canRotate(game, rotated, dx, dy)) {
+        if (canRotate(game, (const int (*)[4])rotated, dx, dy)) {
             clear_piece_from_field(game);
             memcpy(game->currentPiece, rotated, sizeof(rotated));
             game->currentX += dx;

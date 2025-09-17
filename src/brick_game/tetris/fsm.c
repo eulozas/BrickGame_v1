@@ -1,4 +1,5 @@
 #include "fsm.h"
+#include <stdio.h>
 
 void on_start_state(UserAction_t action, GameStruct_t *game){
         switch (action)
@@ -173,7 +174,6 @@ GameInfo_t updateCurrentState() {
     static int init_info = 0;
 
     GameStruct_t *game = getGameStruct();
-
     if (!init_info) {
         info = mallocGameInfo();
         init_info = 1;
@@ -182,6 +182,7 @@ GameInfo_t updateCurrentState() {
     copyGameInfo(game, &info);
     if(game->running == 0){
         freeGameInfo(&info);
+        init_info = 0;
     }
     return info;
 }

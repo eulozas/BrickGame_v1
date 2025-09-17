@@ -149,7 +149,9 @@ dist: clean
 	@rm -rf $(DIST_DIR)
 	@echo "Distribution created: $(DIST_ARCHIVE)"
 
-
+cppcheck:
+	cppcheck --enable=all --inconclusive --std=c11 --quiet --force \
+  --suppress=missingIncludeSystem $(SRC) $(SRC_UI) $(TEST_DIR)/
 
 # ===== Цель: проверка на утечки памяти с помощью valgrind =====
 valgrind: test_build

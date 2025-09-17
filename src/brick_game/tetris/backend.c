@@ -20,6 +20,7 @@ void initGameStruct(GameStruct_t *game){
 }
 
 GameStruct_t *getGameStruct() {
+    
     static GameStruct_t game;  
     static int init_game = 0;
 
