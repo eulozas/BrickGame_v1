@@ -163,4 +163,7 @@ clean:
 	rm -f *.info $(TEST_BIN) $(LIB_NAME)
 	rm -rf coverage
 
+format:
+	clang-format -n -style=Google brick_game/tetris/*.c brick_game/tetris/*.h gui/cli/*.c gui/cli/*.h tests/*.c tests/*.h
+
 .PHONY: all re test_build test coverage_build gcov_report clean install uninstall dist

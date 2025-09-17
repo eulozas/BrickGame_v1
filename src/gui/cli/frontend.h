@@ -3,7 +3,7 @@
 
 #include "../../brick_game/tetris/types.h"
 
-//ncurses
+// ncurses
 void init_ncurses();
 void end_ncurses();
 void block_input_ncurses();

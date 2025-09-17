@@ -19,7 +19,8 @@ void draw_piece_to_field(GameStruct_t *game);
 void clear_piece_from_field(GameStruct_t *game);
 int canMoveRight(const GameStruct_t *game);
 int canMoveLeft(const GameStruct_t *game);
-int canRotate(const GameStruct_t *game, const int rotated[4][4], int offsetX, int offsetY);
+int canRotate(const GameStruct_t *game, const int rotated[4][4], int offsetX,
+              int offsetY);
 int clearLines(GameStruct_t *game);
 void updateScore(GameStruct_t *game, int lines_cleared);
 void updateLevel(GameStruct_t *game);

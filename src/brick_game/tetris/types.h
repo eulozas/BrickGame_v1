@@ -5,15 +5,15 @@
 #define FIELD_HEIGHT 20
 
 typedef enum {
-    START = 0,       
-    SPAWN,           
-    MOVING,          
-    SHIFTING,        
-    ATTACHING,  
-    PAUSE,     
-    GAMEOVER,        
-    EXIT_STATE,  
-    FILE_ERROR_STATE 
+  START = 0,
+  SPAWN,
+  MOVING,
+  SHIFTING,
+  ATTACHING,
+  PAUSE,
+  GAMEOVER,
+  EXIT_STATE,
+  FILE_ERROR_STATE
 } tet_state;
 
 typedef enum {
