@@ -179,7 +179,9 @@ $(DOC_DVI): $(DOC_SRC)
 # ===== Очистка документации =====
 doc-clean:
 	rm -f $(DOC_INFO) $(DOC_PDF) $(DOC_DVI)
-
+	rm -f tetris.*log tetris.*toc tetris.*aux
+	rm -f tetris.cp tetris.fn tetris.vr tetris.tp tetris.pg tetris.ky
+	rm -f tetris.fls tetris.out tetris.synctex.gz
 
 # ===== Очистка =====
 clean:

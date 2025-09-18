@@ -1,7 +1,9 @@
-\input texinfo
-@c -*-texinfo-*-
+\input texinfo   @c -*-texinfo-*-
+@documentencoding UTF-8
+@c %**start-of-header
 @setfilename tetris.info
 @settitle BrickGame v1.0 aka Tetris
+@c %**end-of-header
 
 @copying
 BrickGame v1.0 aka Tetris -- simple console implementation of Tetris in C.
@@ -13,6 +15,8 @@ Copyright (C) 2025 humfreyj.
 @subtitle User Documentation
 @author humfreyj
 @end titlepage
+
+@contents
 
 @node Top
 @top BrickGame v1.0
@@ -67,7 +71,7 @@ By default, installation prefix is @code{/usr/local}.
 You can change it:
 
 @example
-make install PREFIX=@code{/home/user/mytetris}
+make install PREFIX=/home/user/mytetris
 @end example
 
 Installed components:
@@ -244,3 +248,5 @@ This generates @file{tetris-1.0.tar.gz} with source files, headers, tests, and M
 
 This program is free software: you can redistribute and/or modify it
 under GNU GPL v3 or later.
+
+@bye
