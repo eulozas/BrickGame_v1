@@ -158,30 +158,33 @@ valgrind: test_build
 	CK_FORK=no valgrind --tool=memcheck --leak-check=yes ./$(TEST_BIN)
 
 # ===== Документация =====
+DOC_DIR   = docs
+DOC_SRC   = $(DOC_DIR)/tetris.texi
+DOC_INFO  = $(DOC_DIR)/tetris.info
+DOC_PDF   = $(DOC_DIR)/tetris.pdf
+DOC_DVI   = $(DOC_DIR)/tetris.dvi
 
-DOC_SRC   = tetris.texi
-DOC_INFO  = tetris.info
-DOC_PDF   = tetris.pdf
-DOC_DVI   = tetris.dvi
-
+# Читать info docs/tetris.info
 info: $(DOC_INFO)
-$(DOC_INFO): $(DOC_SRC)
+$(DOC_INFO): $(DOC_SRC) | $(DOC_DIR)
 	makeinfo $< -o $@
 
 pdf: $(DOC_PDF)
-$(DOC_PDF): $(DOC_SRC)
-	texi2pdf $< -o $@
+$(DOC_PDF): $(DOC_SRC) | $(DOC_DIR)
+	cd $(DOC_DIR) && texi2pdf ../$(DOC_SRC) -o $(notdir $@)
 
+# Читать xdvi docs/tetris.dvi
 dvi: $(DOC_DVI)
-$(DOC_DVI): $(DOC_SRC)
-	texi2dvi $<
+$(DOC_DVI): $(DOC_SRC) | $(DOC_DIR)
+	cd $(DOC_DIR) && texi2dvi ../$(DOC_SRC) && mv tetris.dvi $(notdir $@)
 
 # ===== Очистка документации =====
 doc-clean:
 	rm -f $(DOC_INFO) $(DOC_PDF) $(DOC_DVI)
-	rm -f tetris.*log tetris.*toc tetris.*aux
-	rm -f tetris.cp tetris.fn tetris.vr tetris.tp tetris.pg tetris.ky
-	rm -f tetris.fls tetris.out tetris.synctex.gz
+	rm -f $(DOC_DIR)/tetris.*log $(DOC_DIR)/tetris.*toc $(DOC_DIR)/tetris.*aux
+	rm -f $(DOC_DIR)/tetris.cp $(DOC_DIR)/tetris.fn $(DOC_DIR)/tetris.vr 
+	rm -f $(DOC_DIR)/tetris.tp $(DOC_DIR)/tetris.pg $(DOC_DIR)/tetris.ky
+	rm -f $(DOC_DIR)/tetris.fls $(DOC_DIR)/tetris.out $(DOC_DIR)/tetris.synctex.gz
 
 # ===== Очистка =====
 clean:
@@ -192,4 +195,4 @@ clean:
 format:
 	clang-format -n -style=Google brick_game/tetris/*.c brick_game/tetris/*.h gui/cli/*.c gui/cli/*.h tests/*.c tests/*.h
 
-.PHONY: all re test_build test coverage_build gcov_report clean install uninstall dist
+.PHONY: all re test_build test coverage_build gcov_report clean install uninstall dist info pdf dvi doc-clean
