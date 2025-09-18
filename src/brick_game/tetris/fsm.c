@@ -1,7 +1,5 @@
 #include "fsm.h"
 
-#include <stdio.h>
-
 void on_start_state(UserAction_t action, GameStruct_t *game) {
   switch (action) {
     case Start:

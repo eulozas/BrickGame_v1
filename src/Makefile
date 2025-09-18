@@ -157,6 +157,30 @@ cppcheck:
 valgrind: test_build
 	CK_FORK=no valgrind --tool=memcheck --leak-check=yes ./$(TEST_BIN)
 
+# ===== Документация =====
+
+DOC_SRC   = tetris.texi
+DOC_INFO  = tetris.info
+DOC_PDF   = tetris.pdf
+DOC_DVI   = tetris.dvi
+
+info: $(DOC_INFO)
+$(DOC_INFO): $(DOC_SRC)
+	makeinfo $< -o $@
+
+pdf: $(DOC_PDF)
+$(DOC_PDF): $(DOC_SRC)
+	texi2pdf $< -o $@
+
+dvi: $(DOC_DVI)
+$(DOC_DVI): $(DOC_SRC)
+	texi2dvi $<
+
+# ===== Очистка документации =====
+doc-clean:
+	rm -f $(DOC_INFO) $(DOC_PDF) $(DOC_DVI)
+
+
 # ===== Очистка =====
 clean:
 	rm -rf $(BUILD_DIR) $(EXE_NAME) $(LIB_NAME)

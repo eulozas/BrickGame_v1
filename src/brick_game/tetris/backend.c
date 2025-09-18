@@ -1,5 +1,8 @@
 #include "backend.h"
 
+#include <string.h>
+
+#include "helpers.h"
 #include "pieces.h"
 
 void initGameStruct(GameStruct_t *game) {

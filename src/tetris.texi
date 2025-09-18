@@ -1,0 +1,246 @@
+\input texinfo
+@c -*-texinfo-*-
+@setfilename tetris.info
+@settitle BrickGame v1.0 aka Tetris
+
+@copying
+BrickGame v1.0 aka Tetris -- simple console implementation of Tetris in C.
+Copyright (C) 2025 humfreyj.
+@end copying
+
+@titlepage
+@title BrickGame v1.0 aka Tetris
+@subtitle User Documentation
+@author humfreyj
+@end titlepage
+
+@node Top
+@top BrickGame v1.0
+
+Welcome to the BrickGame v1.0 documentation.
+This document describes how to install, run, and use the program.
+It also contains the finite state machine (FSM) model used in the game logic.
+
+@menu
+* Introduction:: About the game
+* Installation:: How to build and install
+* Gameplay:: How to play
+* Controls:: Controls of the game
+* FSM:: Finite State Machine
+* MakefileTargets:: Makefile build targets
+* Implementation:: Implementation details
+* Uninstallation:: How to remove the program
+* Distribution:: Creating a release archive
+* License:: License information
+@end menu
+
+@node Introduction
+@chapter Introduction
+
+BrickGame v1.0 (aka Tetris) is a simple console version of the classic Tetris
+game implemented in C.
+The program is based on a finite state machine (FSM) that manages game states
+such as piece spawning, moving, attaching, pausing, and game over.
+
+@node Installation
+@chapter Installation
+
+To build the game from source:
+
+@example
+make
+@end example
+
+This will produce:
+@itemize @bullet
+@item Static library: @code{libtetris.a}
+@item Executable: @code{tetris}
+@end itemize
+
+You can install the program system-wide with:
+
+@example
+sudo make install
+@end example
+
+By default, installation prefix is @code{/usr/local}.
+You can change it:
+
+@example
+make install PREFIX=@code{/home/user/mytetris}
+@end example
+
+Installed components:
+@itemize @bullet
+@item Executable: @code{/usr/local/bin/tetris}
+@item Library: @code{/usr/local/lib/libtetris.a}
+@item Header files: @code{/usr/local/include/tetris}
+@end itemize
+
+@node Gameplay
+@chapter Usage
+
+Run the game with:
+
+@example
+./tetris
+@end example
+
+See @ref{Controls} for key bindings.
+
+@node Controls
+@chapter Controls
+
+Default controls:
+
+@itemize @bullet
+@item @kbd{S} -- start new game / restart
+@item @kbd{Q} -- quit
+@item @kbd{P} -- pause / resume
+@item @kbd{LEFT} / @kbd{RIGHT} -- move piece horizontally
+@item @kbd{DOWN} -- accelerate piece fall
+@item @kbd{R} -- rotate piece clockwise
+@end itemize
+
+@node FSM
+@chapter Finite State Machine
+
+The internal logic of the game is modeled as a finite state machine.
+
+Main states:
+@itemize @bullet
+@item @strong{START} -- entry point of the program
+@item @strong{SPAWN} -- new piece appears
+@item @strong{MOVING} -- active piece controlled by user input and timer
+@item @strong{SHIFTING} -- automatic downward shift
+@item @strong{ATTACHING} -- piece locks in place
+@item @strong{FILE_ERROR_STATE} -- error while loading high score file
+@item @strong{PAUSE} -- user pauses
+@item @strong{GAME_OVER} -- no more space for new pieces
+@item @strong{EXIT_STATE} -- program termination
+@end itemize
+
+State transitions triggered by events:
+@itemize @bullet
+@item Timer expiration -> piece shift
+@item Collision detection -> attach piece
+@item User input -> move/rotate, pause, quit
+@item High score file error -> fallback mode
+@item Start or restart -> spawn new piece
+@end itemize
+
+@node MakefileTargets
+@chapter Makefile Targets
+
+Build targets from @file{Makefile}:
+
+@table @asis
+@item @code{all}
+Build executable and static library.
+@example
+make all
+@end example
+
+@item @code{re}
+Full rebuild (clean + all).
+@example
+make re
+@end example
+
+@item @code{test_build}
+Build tests only.
+@example
+make test_build
+@end example
+
+@item @code{test}
+Build and run tests.
+@example
+make test
+@end example
+
+@item @code{coverage_build}
+Build with coverage flags.
+@example
+make coverage_build
+@end example
+
+@item @code{gcov_report}
+Generate coverage report in @file{coverage} directory.
+@example
+make gcov_report
+@end example
+
+@item @code{install}
+Install binaries, libraries, headers.
+@example
+sudo make install
+@end example
+
+@item @code{uninstall}
+Remove installed files.
+@example
+sudo make uninstall
+@end example
+
+@item @code{info} / @code{pdf} / @code{dvi}
+Build documentation (Info / PDF / DVI).
+@example
+make info
+make pdf
+make dvi
+@end example
+
+@item @code{doc-clean}
+Clean documentation artifacts (@file{.info}, @file{.pdf}, @file{.dvi}).
+@end table
+
+@node Implementation
+@chapter Implementation
+
+Brief overview of architecture and key components.
+
+@section File structure
+@itemize @bullet
+@item @file{brick_game/tetris/backend.c, backend.h} -- game state init and management
+@item @file{brick_game/tetris/pieces.c, pieces.h} -- tetromino matrices and operations
+@item @file{brick_game/tetris/fsm.c, fsm.h} -- finite state machine handlers
+@item @file{gui/cli/frontend.c, frontend.h} -- ncurses-based rendering and input
+@item @file{gui/cli/tetris.c} -- main entry point and game loop
+@item @file{brick_game/tetris/types.h} -- main data types and constants
+@item @file{brick_game/tetris/helpers.c, helpers.h} -- high score handling and snapshot building
+@item @file{tests/*} -- unit tests for FSM and pieces
+@end itemize
+
+@node Uninstallation
+@chapter Uninstallation
+
+To remove installed components run:
+
+@example
+sudo make uninstall
+@end example
+
+This will delete:
+@itemize @bullet
+@item @code{tetris} executable
+@item @code{libtetris.a} library
+@item Header files in @code{$(PREFIX)/include/tetris}
+@end itemize
+
+@node Distribution
+@chapter Distribution
+
+To create a release archive:
+
+@example
+make dist
+@end example
+
+This generates @file{tetris-1.0.tar.gz} with source files, headers, tests, and Makefile.
+
+@node License
+@chapter License
+
+This program is free software: you can redistribute and/or modify it
+under GNU GPL v3 or later.

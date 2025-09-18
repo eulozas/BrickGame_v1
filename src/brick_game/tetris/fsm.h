@@ -2,7 +2,6 @@
 #define FSM_H
 
 #include <stdbool.h>
-#include <stdlib.h>
 
 #include "backend.h"
 #include "pieces.h"

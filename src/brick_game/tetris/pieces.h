@@ -1,8 +1,9 @@
 #ifndef PIECES_H
 #define PIECES_H
 
+#include <string.h>
+
 #include "backend.h"
-#include "helpers.h"
 
 #define NUM_TETROMINOS 7
 

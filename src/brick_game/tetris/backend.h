@@ -6,10 +6,8 @@
 #endif
 
 #include <stdlib.h>
-#include <string.h>
 #include <time.h>
 
-#include "helpers.h"
 #include "types.h"
 
 #define FALL_DELAY 1200

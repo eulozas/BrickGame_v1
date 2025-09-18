@@ -1,5 +1,7 @@
 #include "pieces.h"
 
+#include "helpers.h"
+
 void draw_piece_to_field(GameStruct_t *game) {
   for (int y = 0; y < 4; y++) {
     for (int x = 0; x < 4; x++) {
