@@ -77,7 +77,7 @@ Library: @file{/usr/local/lib/libtetris.a}
 Header files: @file{/usr/local/include/tetris}
 
 @node Gameplay
-@chapter Usage and controls
+@chapter Usage, controls and game mechanics
 
 Run the game with:
 
@@ -95,6 +95,22 @@ Run the game with:
 @item @kbd{DOWN} -- accelerate piece fall
 @item @kbd{R} -- rotate piece clockwise
 @end itemize
+
+@noindent Game mechanics
+
+During the game, points are awarded for clearing lines:
+
+@itemize @bullet
+@item 1 line — 100 points
+@item 2 lines — 300 points
+@item 3 lines — 700 points
+@item 4 lines — 1500 points
+@end itemize
+
+@noindent Every time the player scores @code{600} points, the level increases by 1.
+With each new level, the falling speed of the pieces increases.
+The maximum number of levels is 10.
+
 
 @node FSM
 @chapter Finite State Machine
@@ -144,7 +160,9 @@ Brief overview of architecture and key components.
 @node Uninstallation
 @chapter Uninstallation
 
-To remove installed components run:
+There are two ways to remove components, depending on what you want to clean up.
+
+@noindent To remove installed system-wide components run:
 
 @example
 sudo make uninstall
@@ -152,9 +170,23 @@ sudo make uninstall
 
 @noindent This will delete:
 @itemize @bullet
-@item @code{tetris} executable
-@item @code{libtetris.a} library
-@item Header files in @code{$(PREFIX)/include/tetris}
+@item @code{tetris} executable from @file{$(PREFIX)/bin}
+@item @code{libtetris.a} library from @file{$(PREFIX)/lib}
+@item Header files from @file{$(PREFIX)/include/tetris}
+@end itemize
+
+@noindent To clean only local build artifacts (without touching installed files), run:
+
+@example
+make clean
+@end example
+
+@noindent This will delete:
+@itemize @bullet
+@item Build directory @file{build/} with object files
+@item Local binaries @code{tetris} and @code{test_app}
+@item Static library @code{libtetris.a} from the project root
+@item Coverage reports in @file{coverage/}
 @end itemize
 
 @node Distribution
@@ -211,6 +243,12 @@ Generate coverage report in @file{coverage} directory.
 make gcov_report
 @end example
 
+@noindent @code{clean}
+Remove build artifacts, binaries, libraries, coverage reports.
+@example
+make clean
+@end example
+
 @noindent @code{install}
 Install binaries, libraries, headers.
 @example
@@ -223,6 +261,12 @@ Remove installed files.
 sudo make uninstall
 @end example
 
+@noindent @code{dist}
+Create source distribution archive @file{tetris-1.0.tar.gz}.
+@example
+make dist
+@end example
+
 @noindent @code{info} / @code{pdf} / @code{dvi}
 Build documentation (Info / PDF / DVI).
 @example
@@ -233,6 +277,28 @@ make dvi
 
 @noindent @code{doc-clean}
 Clean documentation artifacts (@file{.info}, @file{.pdf}, @file{.dvi}).
+@example
+make doc-clean
+@end example
+
+@noindent @code{cppcheck}
+Run static code analysis with cppcheck.
+@example
+make cppcheck
+@end example
+
+@noindent @code{valgrind}
+Run tests under Valgrind to check for memory leaks.
+@example
+make valgrind
+@end example
+
+@noindent @code{format}
+Check source formatting with clang-format (Google style).
+@example
+make format
+@end example
+
 
 @node License
 @chapter License

@@ -103,7 +103,7 @@ void printField(GameInfo_t *info) {
 
 void print_stat(GameInfo_t *info) {
   mvprintw(8, FIELD_WIDTH * 2 + 4, "Score: %d", info->score);
-  mvprintw(9, FIELD_WIDTH * 2 + 4, "High:  %d", info->high_score);
+  mvprintw(9, FIELD_WIDTH * 2 + 4, "High score:  %d", info->high_score);
   mvprintw(10, FIELD_WIDTH * 2 + 4, "Level: %d", info->level);
   mvprintw(11, FIELD_WIDTH * 2 + 4, "Speed: %d", info->speed);
 }
@@ -152,12 +152,12 @@ void drawGameInfo(GameInfo_t *info) {
     mvprintw(10, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press Q to exit")) / 2,
              "Press Q to exit");
   } else {
-    mvprintw(17, FIELD_WIDTH * 2 + 4, "KEY RIGHT - Move right");
-    mvprintw(18, FIELD_WIDTH * 2 + 4, "KEY LEFT - Move left");
-    mvprintw(19, FIELD_WIDTH * 2 + 4, "KEY DOWN - Fall down");
-    mvprintw(20, FIELD_WIDTH * 2 + 4, "R - Rotate");
-    mvprintw(21, FIELD_WIDTH * 2 + 4, "P - Pause");
-    mvprintw(21, FIELD_WIDTH * 2 + 14, "Q - Exit");
+    mvprintw(16, FIELD_WIDTH * 2 + 4, "KEY RIGHT - Move right");
+    mvprintw(17, FIELD_WIDTH * 2 + 4, "KEY LEFT - Move left");
+    mvprintw(18, FIELD_WIDTH * 2 + 4, "KEY DOWN - Fall down");
+    mvprintw(19, FIELD_WIDTH * 2 + 4, "R - Rotate");
+    mvprintw(20, FIELD_WIDTH * 2 + 4, "P - Pause");
+    mvprintw(21, FIELD_WIDTH * 2 + 4, "Q - Exit");
   }
 
   print_stat(info);

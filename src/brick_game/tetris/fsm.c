@@ -117,7 +117,7 @@ void on_file_error_state(UserAction_t action, GameStruct_t *game) {
   switch (action) {
     case Start:
       game->state = SPAWN;
-      game->high_score = -1;  // подумать какое значение оставить
+      game->high_score = 0;  // подумать какое значение оставить
       break;
     case Terminate:
       game->state = EXIT_STATE;

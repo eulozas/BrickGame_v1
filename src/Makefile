@@ -176,7 +176,7 @@ $(DOC_PDF): $(DOC_SRC) | $(DOC_DIR)
 # Читать xdvi docs/tetris.dvi
 dvi: $(DOC_DVI)
 $(DOC_DVI): $(DOC_SRC) | $(DOC_DIR)
-	cd $(DOC_DIR) && texi2dvi ../$(DOC_SRC) && mv tetris.dvi $(notdir $@)
+	cd $(DOC_DIR) && texi2dvi ../$(DOC_SRC)
 
 # ===== Очистка документации =====
 doc-clean:

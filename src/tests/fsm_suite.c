@@ -268,7 +268,7 @@ START_TEST(fsm_file_error1) {
   restartGameStruct(&game);
   game.state = FILE_ERROR_STATE;
   on_file_error_state(Start, &game);
-  ck_assert_int_eq(game.high_score, -1);
+  ck_assert_int_eq(game.high_score, 0);
   ck_assert(game.state == SPAWN);
 }
 END_TEST

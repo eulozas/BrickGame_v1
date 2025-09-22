@@ -7,7 +7,12 @@ int loadHighScore(int *high_score) {
     exit_code = 0;
   } else {
     if (fscanf(file, "%d", high_score) != 1) {
-      exit_code = 0;
+      fseek(file, 0, SEEK_END);
+      if (ftell(file) == 0) {
+        *high_score = 0;
+      } else {
+        exit_code = 0;
+      }
     }
     fclose(file);
   }
