@@ -25,7 +25,7 @@ void on_spawn_state(GameStruct_t *game) {
     game->state = MOVING;
     game->last_fall_time = getCurrentTimeMs();
   } else {
-    game->level = -1;
+    game->pause = 2;
     game->state = GAMEOVER;
   }
 }
@@ -117,7 +117,7 @@ void on_file_error_state(UserAction_t action, GameStruct_t *game) {
   switch (action) {
     case Start:
       game->state = SPAWN;
-      game->high_score = 0;  // подумать какое значение оставить
+      game->high_score = 0;
       break;
     case Terminate:
       game->state = EXIT_STATE;

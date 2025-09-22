@@ -130,7 +130,7 @@ void drawGameInfo(GameInfo_t *info) {
              "Press P to continue");
     mvprintw(9, (FIELD_WIDTH * 2 + 2 - (int)strlen("Press Q to exit")) / 2,
              "Press Q to exit");
-  } else if (info->level == -1) {  // лучше проверять на NULL gameInfo поля
+  } else if (info->pause == 2) {
     // Баннер GAMEOVER
     mvprintw(5, (FIELD_WIDTH * 2 + 2 - (int)strlen("GAME OVER")) / 2,
              "GAME OVER");
