@@ -51,8 +51,6 @@ UserAction_t getUserAction() {
     case 'R':
       action = Action;
       break;
-      // подуамть над default? Может норм, если какое-то из UserAction_t будет
-      // возвращаться если нет нажатия
   }
 
   return action;

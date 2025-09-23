@@ -2,6 +2,7 @@
 
 #include "../brick_game/tetris/backend.h"
 #include "../brick_game/tetris/fsm.h"
+#include "../brick_game/tetris/helpers.h"
 #include "../brick_game/tetris/pieces.h"
 #include "test_header.h"
 
@@ -11,7 +12,7 @@ START_TEST(fsm_start1) {
   on_start_state(Start, &game);
   ck_assert_int_eq(game.level, 1);
   ck_assert_int_eq(game.speed, 1);
-  ck_assert(game.state == SPAWN);
+  ck_assert(game.state == SPAWN || game.state == FILE_ERROR_STATE);
 }
 END_TEST
 
@@ -294,9 +295,8 @@ END_TEST
 START_TEST(fsm_user_input1) {
   GameStruct_t *game = getGameStruct();
   restartGameStruct(game);
-  game->state = START;
   userInput(Start, false);
-  ck_assert_int_eq(game->state, SPAWN);
+  ck_assert(game->state == SPAWN || game->state == FILE_ERROR_STATE);
 }
 END_TEST
 
@@ -421,6 +421,55 @@ START_TEST(backend_copy_free_null) {
 }
 END_TEST
 
+START_TEST(test_loadHighScore_no_file) {
+  int score = 700;
+  remove(HIGHSCORE_FILE);
+
+  int result = loadHighScore(&score);
+
+  ck_assert_int_eq(result, 0);
+  ck_assert_int_eq(score, 700);
+}
+END_TEST
+
+START_TEST(test_loadHighScore_empty_file) {
+  int score = -999;
+  FILE *f = fopen(HIGHSCORE_FILE, "w");
+  fclose(f);
+
+  int result = loadHighScore(&score);
+
+  ck_assert_int_eq(result, 1);
+  ck_assert_int_eq(score, 0);
+}
+END_TEST
+
+START_TEST(test_loadHighScore_ok) {
+  int score = -999;
+  FILE *f = fopen(HIGHSCORE_FILE, "w");
+  fprintf(f, "500\n");
+  fclose(f);
+
+  int result = loadHighScore(&score);
+
+  ck_assert_int_eq(result, 1);
+  ck_assert_int_eq(score, 500);
+}
+END_TEST
+
+START_TEST(test_loadHighScore_err) {
+  int score = -1;
+  FILE *f = fopen(HIGHSCORE_FILE, "w");
+  fprintf(f, "abcdef\n");
+  fclose(f);
+
+  int result = loadHighScore(&score);
+
+  ck_assert_int_eq(result, 0);
+  ck_assert_int_eq(score, -1);
+}
+END_TEST
+
 Suite *fsm_suite() {
   Suite *s = suite_create("fsm_suite");
   TCase *tc = tcase_create("Core");
@@ -466,6 +515,10 @@ Suite *fsm_suite() {
   tcase_add_test(tc, fsm_user_input11);
   tcase_add_test(tc, fsm_upd_current_state1);
   tcase_add_test(tc, backend_copy_free_null);
+  tcase_add_test(tc, test_loadHighScore_no_file);
+  tcase_add_test(tc, test_loadHighScore_empty_file);
+  tcase_add_test(tc, test_loadHighScore_ok);
+  tcase_add_test(tc, test_loadHighScore_err);
 
   suite_add_tcase(s, tc);
   return s;

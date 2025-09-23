@@ -2,7 +2,7 @@
 
 int loadHighScore(int *high_score) {
   int exit_code = 1;
-  FILE *file = fopen("brick_game/tetris/highscore.txt", "r");
+  FILE *file = fopen(HIGHSCORE_FILE, "r");
   if (!file) {
     exit_code = 0;
   } else {
@@ -21,7 +21,7 @@ int loadHighScore(int *high_score) {
 
 int saveHighScore(int high_score) {
   int exit_code = 1;
-  FILE *file = fopen("brick_game/tetris/highscore.txt", "w");
+  FILE *file = fopen(HIGHSCORE_FILE, "w");
   if (!file) {
     exit_code = 0;
   } else {
