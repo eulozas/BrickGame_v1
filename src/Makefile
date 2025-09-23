@@ -142,6 +142,7 @@ DIST_ARCHIVE = $(DIST_DIR).tar.gz
 dist: clean
 	@mkdir -p $(DIST_DIR)
 	@cp -r brick_game $(DIST_DIR)/
+	@cp -r docs $(DIST_DIR)/
 	@cp -r gui $(DIST_DIR)/
 	@cp -r tests $(DIST_DIR)/
 	@cp Makefile $(DIST_DIR)/

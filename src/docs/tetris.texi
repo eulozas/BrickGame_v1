@@ -96,7 +96,7 @@ Run the game with:
 @item @kbd{R} -- rotate piece clockwise
 @end itemize
 
-@noindent Game mechanics
+@noindent Game mechanics:
 
 During the game, points are awarded for clearing lines:
 
