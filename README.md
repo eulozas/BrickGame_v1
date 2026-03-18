@@ -52,3 +52,4 @@
 
 ```bash
 make
+./tetris 
